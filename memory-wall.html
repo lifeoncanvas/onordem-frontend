@@ -1,0 +1,2186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Memory Wall — Honour Your Mentor</title>
+  
+  <!-- Google Fonts: Fraunces (serif), Figtree (sans) & Caveat (handwriting script) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Figtree:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       DESIGN TOKENS & PALETTE
+       Explicitly adhering to requested specs:
+       - Deep wine: #3A0010 to #6E0C1E
+       - Maroon: #8E2A33 & Rose: #C0675F
+       - Amber: #EFA25B
+       - Cream: #FBF4EE & White cards: #FFFFFF
+       - Ink: #3B0B14 & Muted: #8C7570
+       - Dark mode: Background #1A0409, Cards #2A0B12
+       ========================================================================== */
+    :root {
+      --color-wine-dark: #3A0010;
+      --color-wine-light: #6E0C1E;
+      --color-maroon: #8E2A33;
+      --color-rose: #C0675F;
+      --color-amber: #EFA25B;
+      --color-amber-btn: #F0A35C;
+      
+      --color-bg: #FBF4EE;
+      --color-card-bg: #FFFFFF;
+      --color-card-border: rgba(142, 42, 51, 0.08);
+      --color-card-shadow: rgba(58, 0, 16, 0.06);
+      
+      --color-ink: #3B0B14;
+      --color-muted: #8C7570;
+      --color-divider: rgba(142, 42, 51, 0.12);
+      
+      --color-header-ink: #FFFFFF;
+      --color-header-muted: rgba(251, 244, 238, 0.82);
+      --color-frosted-bg: rgba(255, 255, 255, 0.12);
+      --color-frosted-border: rgba(255, 255, 255, 0.22);
+      
+      --font-serif: 'Fraunces', Georgia, serif;
+      --font-sans: 'Figtree', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-script: 'Caveat', cursive, -apple-system, sans-serif;
+      
+      --radius-header: 36px;
+      --radius-card: 26px;
+      --radius-pill: 999px;
+      --radius-sm: 12px;
+      
+      --trans-speed: 0.22s;
+    }
+
+    /* Dark Mode Theme */
+    [data-theme="dark"] {
+      --color-bg: #1A0409;
+      --color-card-bg: #2A0B12;
+      --color-card-border: rgba(239, 162, 91, 0.12);
+      --color-card-shadow: rgba(0, 0, 0, 0.4);
+      
+      --color-ink: #FBF4EE;
+      --color-muted: #B89E99;
+      --color-divider: rgba(239, 162, 91, 0.14);
+      
+      --color-frosted-bg: rgba(255, 255, 255, 0.08);
+      --color-frosted-border: rgba(239, 162, 91, 0.25);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --color-bg: #1A0409;
+        --color-card-bg: #2A0B12;
+        --color-card-border: rgba(239, 162, 91, 0.12);
+        --color-card-shadow: rgba(0, 0, 0, 0.4);
+        
+        --color-ink: #FBF4EE;
+        --color-muted: #B89E99;
+        --color-divider: rgba(239, 162, 91, 0.14);
+        
+        --color-frosted-bg: rgba(255, 255, 255, 0.08);
+        --color-frosted-border: rgba(239, 162, 91, 0.25);
+      }
+    }
+
+    /* Reset & Base Setup */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--color-bg);
+      color: var(--color-ink);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.45;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      transition: background-color var(--trans-speed) ease, color var(--trans-speed) ease;
+    }
+
+    /* Outer Shell for Responsive Mobile Experience */
+    .app-shell {
+      width: 100%;
+      max-width: 440px;
+      min-height: 100vh;
+      background-color: var(--color-bg);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 50px rgba(58, 0, 16, 0.08);
+      padding-bottom: 40px;
+    }
+
+    /* Accessible Focus & Reduced Motion */
+    button:focus-visible, input:focus-visible {
+      outline: 2px solid var(--color-amber);
+      outline-offset: 3px;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+      transition: transform 0.15s ease, opacity 0.15s ease, background-color 0.15s ease;
+    }
+
+    button:active {
+      transform: scale(0.96);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      button:active {
+        transform: none !important;
+      }
+    }
+
+    /* ==========================================================================
+       SECTION 1: HEADER
+       - Full-width wine gradient #3A0010 to #6E0C1E, rounded bottom (36px)
+       - Two faint translucent circles for depth
+       - Soft amber glow in the bottom-left
+       - Top row: logo tile, "Memory Wall", glassy buttons
+       - Headline: "Your Personal" light, "Archive" large & bold
+       - Frosted glass stats bar
+       ========================================================================== */
+    .wall-header {
+      position: relative;
+      background: linear-gradient(155deg, var(--color-wine-dark) 0%, var(--color-wine-light) 100%);
+      border-bottom-left-radius: var(--radius-header);
+      border-bottom-right-radius: var(--radius-header);
+      padding: 24px 22px 28px;
+      color: var(--color-header-ink);
+      overflow: hidden;
+      box-shadow: 0 14px 34px rgba(58, 0, 16, 0.22);
+    }
+
+    /* Depth Circles */
+    .wall-header::before {
+      content: '';
+      position: absolute;
+      top: -40px;
+      right: -30px;
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
+      pointer-events: none;
+    }
+
+    .wall-header::after {
+      content: '';
+      position: absolute;
+      top: 90px;
+      right: 30px;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(192, 103, 95, 0.15) 0%, rgba(192, 103, 95, 0) 70%);
+      pointer-events: none;
+    }
+
+    /* Soft Amber Glow in bottom-left */
+    .header-amber-glow {
+      position: absolute;
+      bottom: -30px;
+      left: -20px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(239, 162, 91, 0.28) 0%, rgba(239, 162, 91, 0) 70%);
+      filter: blur(12px);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Top Row */
+    .header-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 26px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo-tile {
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-amber);
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.25);
+    }
+
+    .brand-title {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: #FFFFFF;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .glass-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .glass-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .glass-btn svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Expandable Search Input within Header */
+    .search-bar-wrap {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      margin-bottom: 0;
+      transition: max-height 0.25s ease, opacity 0.2s ease, margin 0.25s ease;
+    }
+
+    .search-bar-wrap.open {
+      max-height: 52px;
+      opacity: 1;
+      margin-bottom: 18px;
+    }
+
+    .search-input-box {
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: var(--radius-pill);
+      padding: 6px 14px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .search-input-box svg {
+      width: 16px;
+      height: 16px;
+      color: var(--color-amber);
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+
+    .search-input-box input {
+      border: none;
+      background: transparent;
+      color: #FFFFFF;
+      font-size: 0.92rem;
+      font-family: var(--font-sans);
+      width: 100%;
+      outline: none;
+    }
+
+    .search-input-box input::placeholder {
+      color: rgba(255, 255, 255, 0.65);
+    }
+
+    /* Headline Section */
+    .headline-area {
+      margin-bottom: 12px;
+    }
+
+    .headline-prefix {
+      display: block;
+      font-family: var(--font-serif);
+      font-weight: 300;
+      font-size: 1.45rem;
+      color: var(--color-header-muted);
+      letter-spacing: -0.01em;
+      line-height: 1.15;
+    }
+
+    .headline-title {
+      font-family: var(--font-serif);
+      font-weight: 700;
+      font-size: 2.75rem;
+      letter-spacing: -0.025em;
+      color: #FFFFFF;
+      line-height: 1.05;
+      margin-top: 2px;
+      margin-bottom: 8px;
+      text-shadow: 0 2px 10px rgba(58, 0, 16, 0.35);
+    }
+
+    .headline-subtitle {
+      font-size: 0.88rem;
+      color: var(--color-header-muted);
+      line-height: 1.42;
+      max-width: 320px;
+    }
+
+    /* Frosted Glass Stats Bar */
+    .stats-bar {
+      margin-top: 22px;
+      background: var(--color-frosted-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--color-frosted-border);
+      border-radius: 18px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    }
+
+    .stat-item {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      text-align: left;
+    }
+
+    .stat-number {
+      font-family: var(--font-serif);
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: var(--color-amber);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--color-header-muted);
+      line-height: 1.1;
+      text-transform: capitalize;
+    }
+
+    .stat-curated {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stat-curated svg {
+      width: 17px;
+      height: 17px;
+      fill: var(--color-rose);
+      stroke: var(--color-rose);
+    }
+
+    .stat-curated-text {
+      font-family: var(--font-serif);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #FFFFFF;
+    }
+
+    .stat-divider {
+      width: 1px;
+      height: 26px;
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    /* ==========================================================================
+       SECTION 2: YOUR MENTORS
+       - Title "Your Mentors" with "5 people" count on right
+       - Subtitle "The people who shaped you."
+       - Horizontally scrolling row of pill filter chips: All, School, Study, Work, Life
+       - Cards in 2-column flexbox grid (flex-wrap, 2 per row, equal heights, 14px gap)
+       ========================================================================== */
+    .mentors-section {
+      padding: 24px 18px 10px;
+    }
+
+    .section-header {
+      margin-bottom: 16px;
+    }
+
+    .section-title-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 3px;
+    }
+
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      color: var(--color-ink);
+    }
+
+    .section-count-badge {
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--color-muted);
+      background: rgba(142, 42, 51, 0.08);
+      padding: 3px 9px;
+      border-radius: var(--radius-pill);
+      letter-spacing: 0.02em;
+    }
+
+    [data-theme="dark"] .section-count-badge {
+      background: rgba(239, 162, 91, 0.12);
+      color: var(--color-amber);
+    }
+
+    .section-subtitle {
+      font-size: 0.86rem;
+      color: var(--color-muted);
+      font-weight: 400;
+    }
+
+    /* Horizontally scrolling row of pill filter chips */
+    .chips-scroll-container {
+      margin-left: -18px;
+      margin-right: -18px;
+      padding: 4px 18px 16px;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .chips-scroll-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-chip {
+      padding: 7px 16px;
+      border-radius: var(--radius-pill);
+      font-size: 0.85rem;
+      font-weight: 500;
+      white-space: nowrap;
+      background: var(--color-card-bg);
+      color: var(--color-muted);
+      border: 1px solid var(--color-card-border);
+      box-shadow: 0 2px 6px var(--color-card-shadow);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .filter-chip.active {
+      background: linear-gradient(135deg, var(--color-wine-dark) 0%, var(--color-wine-light) 100%);
+      color: #FFFFFF;
+      border-color: transparent;
+      box-shadow: 0 4px 12px rgba(58, 0, 16, 0.28);
+      font-weight: 600;
+    }
+
+    .filter-chip:hover:not(.active) {
+      color: var(--color-ink);
+      border-color: rgba(142, 42, 51, 0.2);
+    }
+
+    /* ==========================================================================
+       TODAY'S MEMORY FEATURE (IMAGE 1)
+       ========================================================================== */
+    .today-memory-section {
+      padding: 24px 22px 18px;
+      position: relative;
+    }
+
+    .today-label {
+      font-family: var(--font-script);
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #D27928;
+      margin-bottom: 6px;
+      letter-spacing: 0.01em;
+    }
+
+    .today-quote {
+      font-family: var(--font-serif);
+      font-size: 1.45rem;
+      line-height: 1.32;
+      font-weight: 600;
+      color: var(--color-ink);
+      letter-spacing: -0.015em;
+      margin-bottom: 12px;
+    }
+
+    .today-footer {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+
+    .today-author {
+      font-family: var(--font-script);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--color-ink);
+      line-height: 1;
+    }
+
+    .today-another-link {
+      font-family: var(--font-sans);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #5A0C18;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+
+    [data-theme="dark"] .today-another-link {
+      color: var(--color-amber);
+    }
+
+    .today-divider {
+      height: 1px;
+      background: var(--color-divider);
+      margin: 18px 22px 0;
+    }
+
+    /* ==========================================================================
+       ANNIVERSARY BANNER CARD (IMAGE 2)
+       ========================================================================== */
+    .anniversary-card {
+      background: linear-gradient(135deg, #62101F 0%, #30000A 100%);
+      border-radius: 26px;
+      padding: 20px 20px 18px;
+      color: #FFFFFF;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 22px;
+      box-shadow: 0 10px 28px rgba(58, 0, 16, 0.22);
+    }
+
+    .anniversary-card::after {
+      content: '';
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(239, 162, 91, 0.15) 0%, rgba(239, 162, 91, 0) 70%);
+      pointer-events: none;
+    }
+
+    .anniversary-badge {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(239, 162, 91, 0.35);
+      color: #FFF8F3;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 4px 14px;
+      border-radius: var(--radius-pill);
+      margin-bottom: 12px;
+      letter-spacing: 0.02em;
+    }
+
+    .anniversary-title {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      font-weight: 600;
+      line-height: 1.35;
+      color: #FFFFFF;
+      margin-bottom: 18px;
+      max-width: 320px;
+    }
+
+    .anniversary-bottom {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .anniversary-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #FFF8F3;
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4), 0 0 16px rgba(239, 162, 91, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-serif);
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: #3B0B14;
+      flex-shrink: 0;
+    }
+
+    .anniversary-cta-btn {
+      background: var(--color-amber-btn);
+      color: #3B0B14;
+      font-family: var(--font-sans);
+      font-size: 0.88rem;
+      font-weight: 700;
+      padding: 9px 18px;
+      border-radius: var(--radius-pill);
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    .anniversary-cta-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* ==========================================================================
+       2-COLUMN MENTOR CARDS (IMAGE 3)
+       ========================================================================== */
+    .mentor-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .mentor-card {
+      flex: 1 1 calc(50% - 7px);
+      min-width: 145px;
+      background-color: var(--color-card-bg);
+      border-radius: var(--radius-card);
+      border: 1px solid var(--color-card-border);
+      box-shadow: 0 4px 16px var(--color-card-shadow);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .mentor-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px var(--color-card-shadow);
+    }
+
+    /* 72px Banner with Flip Button */
+    .card-banner {
+      height: 72px;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .card-banner::after {
+      content: '';
+      position: absolute;
+      top: -24px;
+      right: -24px;
+      width: 104px;
+      height: 104px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.18);
+      pointer-events: none;
+    }
+
+    /* Top Right Flip/Refresh Button */
+    .card-flip-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.24);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      cursor: pointer;
+      z-index: 5;
+      transition: transform 0.25s ease, background 0.15s ease;
+    }
+
+    .card-flip-btn:hover {
+      background: rgba(255, 255, 255, 0.38);
+      transform: rotate(180deg);
+    }
+
+    .card-flip-btn svg {
+      width: 13px;
+      height: 13px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.2;
+    }
+
+    .banner-theme-1 { background-color: #93363F; }
+    .banner-theme-2 { background-color: #480E18; }
+    .banner-theme-3 { background-color: #E49147; }
+    .banner-theme-4 { background-color: #863D46; }
+    .banner-theme-5 { background-color: #9E4048; }
+
+    /* Centered Overlapping Avatar with Halo Ring */
+    .card-avatar-wrap {
+      margin-top: -36px;
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .avatar-circle {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background-color: #FFF8F3;
+      box-shadow: 0 0 0 3.5px var(--color-card-bg), 0 0 0 5px rgba(239, 162, 91, 0.4), 0 4px 14px rgba(58, 0, 16, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    [data-theme="dark"] .avatar-circle {
+      background-color: #381219;
+      box-shadow: 0 0 0 3.5px var(--color-card-bg), 0 0 0 5px rgba(239, 162, 91, 0.4), 0 4px 14px rgba(0, 0, 0, 0.4);
+    }
+
+    .avatar-initials {
+      font-family: var(--font-serif);
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #3B0B14;
+      letter-spacing: -0.01em;
+      line-height: 1;
+    }
+
+    [data-theme="dark"] .avatar-initials {
+      color: #FFF8F3;
+    }
+
+    /* Card Body */
+    .card-body {
+      padding: 10px 12px 10px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    /* Mentor Name in Handwritten Script */
+    .mentor-name {
+      font-family: var(--font-script);
+      font-weight: 700;
+      font-size: 1.48rem;
+      line-height: 1.15;
+      color: var(--color-ink);
+      margin-top: 4px;
+      margin-bottom: 2px;
+      letter-spacing: -0.01em;
+    }
+
+    .mentor-role {
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--color-muted);
+      margin-bottom: 3px;
+    }
+
+    /* Duration Italic Tag */
+    .mentor-duration {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 0.8rem;
+      color: #D27928;
+      margin-bottom: 8px;
+    }
+
+    /* Trait Badge */
+    .mentor-trait-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(239, 162, 91, 0.16);
+      color: var(--color-ink);
+      font-size: 0.73rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      margin-bottom: 12px;
+    }
+
+    .mentor-trait-pill svg {
+      width: 12px;
+      height: 12px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.2;
+    }
+
+    /* "The lesson I carry" subhead */
+    .card-lesson-label {
+      font-family: var(--font-sans);
+      font-size: 0.73rem;
+      font-weight: 700;
+      color: #D27928;
+      margin-bottom: 4px;
+      text-transform: capitalize;
+    }
+
+    /* Quote */
+    .mentor-quote {
+      font-family: var(--font-serif);
+      font-style: normal;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      color: var(--color-ink);
+      opacity: 0.95;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 8px;
+      padding: 0 2px;
+      flex-grow: 1;
+    }
+
+    /* Inset Divider */
+    .card-divider {
+      width: calc(100% - 28px);
+      margin: 6px auto 10px;
+      height: 1px;
+      background-color: var(--color-divider);
+      border: none;
+    }
+
+    /* Card Footer with memory count */
+    .card-footer {
+      padding: 0 12px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: transparent;
+    }
+
+    .card-footer svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.2;
+      flex-shrink: 0;
+    }
+
+    .memory-count-text {
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    /* "Send thanks" CTA Button */
+    .send-thanks-btn {
+      width: calc(100% - 24px);
+      margin: 0 auto 6px;
+      background: var(--color-amber-btn);
+      color: #3B0B14;
+      font-family: var(--font-sans);
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 9px 12px;
+      border-radius: var(--radius-pill);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(240, 163, 92, 0.35);
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    .send-thanks-btn:active {
+      transform: scale(0.96);
+    }
+
+    .send-thanks-btn svg {
+      width: 13px;
+      height: 13px;
+      fill: #3B0B14;
+      stroke: #3B0B14;
+    }
+
+    .last-thanked-text {
+      font-size: 0.72rem;
+      color: var(--color-muted);
+      text-align: center;
+      padding-bottom: 14px;
+    }
+
+    .accent-anita { color: #93363F; }
+    .accent-david { color: #480E18; }
+    .accent-vikram { color: #D27928; }
+    .accent-priya { color: #863D46; }
+    .accent-rohan { color: #9E4048; }
+
+    [data-theme="dark"] .accent-anita { color: #E5868E; }
+    [data-theme="dark"] .accent-david { color: #EFA25B; }
+    [data-theme="dark"] .accent-vikram { color: #EFA25B; }
+    [data-theme="dark"] .accent-priya { color: #E5868E; }
+    [data-theme="dark"] .accent-rohan { color: #E5868E; }
+
+    /* "Add a mentor" Card */
+    .add-mentor-card {
+      flex: 1 1 calc(50% - 7px);
+      min-width: 145px;
+      min-height: 230px;
+      border-radius: var(--radius-card);
+      border: 2px dashed rgba(239, 162, 91, 0.55);
+      background: rgba(239, 162, 91, 0.04);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .add-mentor-card:hover {
+      background: rgba(239, 162, 91, 0.09);
+      border-color: var(--color-amber);
+      transform: translateY(-2px);
+    }
+
+    .add-icon-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(239, 162, 91, 0.16);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-amber);
+      margin-bottom: 12px;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+
+    .add-mentor-card:hover .add-icon-circle {
+      transform: scale(1.08);
+      background: var(--color-amber);
+      color: #3A0010;
+    }
+
+    .add-icon-circle svg {
+      width: 24px;
+      height: 24px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .add-title {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--color-ink);
+      margin-bottom: 4px;
+    }
+
+    .add-subtitle {
+      font-size: 0.77rem;
+      color: var(--color-muted);
+      line-height: 1.35;
+    }
+
+    /* Bottom Navigation Bar from Reference Screenshot */
+    .bottom-nav-bar {
+      position: sticky;
+      bottom: 0;
+      width: 100%;
+      background: linear-gradient(180deg, #460915 0%, #290008 100%);
+      border-top-left-radius: 28px;
+      border-top-right-radius: 28px;
+      padding: 12px 22px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.28);
+      z-index: 40;
+      margin-top: 24px;
+    }
+
+    .nav-btn {
+      color: rgba(255, 255, 255, 0.65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: color 0.18s ease;
+    }
+
+    .nav-btn:hover {
+      color: #FFFFFF;
+    }
+
+    .nav-btn svg {
+      width: 23px;
+      height: 23px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Active Nav Tab with Amber Pill */
+    .nav-btn.active .nav-pill {
+      background: var(--color-amber);
+      color: #3A0010;
+      padding: 5px 20px;
+      border-radius: var(--radius-pill);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 10px rgba(239, 162, 91, 0.45);
+    }
+
+    .nav-btn.active .nav-pill svg {
+      stroke: #3A0010;
+      fill: #3A0010;
+    }
+
+    /* "Add a mentor" Card */
+    .add-mentor-card {
+      flex: 1 1 calc(50% - 7px);
+      min-width: 145px;
+      min-height: 230px;
+      border-radius: var(--radius-card);
+      border: 2px dashed rgba(239, 162, 91, 0.55);
+      background: rgba(239, 162, 91, 0.04);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .add-mentor-card:hover {
+      background: rgba(239, 162, 91, 0.09);
+      border-color: var(--color-amber);
+      transform: translateY(-2px);
+    }
+
+    .add-icon-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(239, 162, 91, 0.16);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-amber);
+      margin-bottom: 12px;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+
+    .add-mentor-card:hover .add-icon-circle {
+      transform: scale(1.08);
+      background: var(--color-amber);
+      color: #3A0010;
+    }
+
+    .add-icon-circle svg {
+      width: 24px;
+      height: 24px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .add-title {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--color-ink);
+      margin-bottom: 4px;
+    }
+
+    .add-subtitle {
+      font-size: 0.77rem;
+      color: var(--color-muted);
+      line-height: 1.35;
+    }
+
+    /* Floating Theme & Quick Action Pill at bottom */
+    .bottom-bar {
+      margin-top: 18px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .theme-toggle-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--color-card-bg);
+      border: 1px solid var(--color-card-border);
+      border-radius: var(--radius-pill);
+      padding: 6px 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--color-muted);
+      box-shadow: 0 4px 12px var(--color-card-shadow);
+      cursor: pointer;
+    }
+
+    .theme-toggle-pill:hover {
+      color: var(--color-ink);
+    }
+
+    .theme-toggle-pill svg {
+      width: 14px;
+      height: 14px;
+      color: var(--color-amber);
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    /* Modal / Toast Interaction for "Add Mentor" */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(26, 4, 9, 0.6);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 100;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-sheet {
+      width: 100%;
+      max-width: 440px;
+      background: var(--color-card-bg);
+      border-top-left-radius: 28px;
+      border-top-right-radius: 28px;
+      padding: 24px 22px 32px;
+      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--color-card-border);
+      transform: translateY(100%);
+      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-overlay.active .modal-sheet {
+      transform: translateY(0);
+    }
+
+    .modal-drag-handle {
+      width: 38px;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--color-divider);
+      margin: 0 auto 16px;
+    }
+
+    .modal-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .modal-title {
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--color-ink);
+    }
+
+    .modal-close-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(142, 42, 51, 0.08);
+      color: var(--color-ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--color-muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--color-divider);
+      background: var(--color-bg);
+      color: var(--color-ink);
+      font-family: var(--font-sans);
+      font-size: 0.92rem;
+      outline: none;
+    }
+
+    .form-textarea {
+      resize: none;
+      height: 72px;
+      font-family: var(--font-serif);
+      font-style: italic;
+    }
+
+    .modal-submit-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--color-wine-dark) 0%, var(--color-wine-light) 100%);
+      color: #FFFFFF;
+      font-weight: 600;
+      padding: 13px;
+      border-radius: var(--radius-pill);
+      font-size: 0.95rem;
+      box-shadow: 0 4px 14px rgba(58, 0, 16, 0.3);
+      margin-top: 6px;
+    }
+
+    /* Filter dropdown popover */
+    .filter-popover {
+      position: absolute;
+      top: 66px;
+      right: 22px;
+      background: var(--color-card-bg);
+      border: 1px solid var(--color-card-border);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      padding: 12px;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 50;
+      min-width: 160px;
+    }
+
+    .filter-popover.open {
+      display: flex;
+    }
+
+    .filter-popover-item {
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: var(--color-ink);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .filter-popover-item:hover {
+      background: rgba(142, 42, 51, 0.08);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-shell">
+    
+    <!-- ====================================================================
+         SECTION 1: HEADER
+         ==================================================================== -->
+    <header class="wall-header">
+      <!-- Amber glow element for depth -->
+      <div class="header-amber-glow" aria-hidden="true"></div>
+
+      <div class="header-content">
+        <!-- Top Row -->
+        <div class="header-top-row">
+          <div class="brand-group">
+            <div class="brand-logo-tile" aria-hidden="true">
+              <!-- Book spines icon in amber -->
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                <line x1="10" y1="6" x2="16" y2="6"></line>
+                <line x1="10" y1="10" x2="16" y2="10"></line>
+              </svg>
+            </div>
+            <span class="brand-title">Memory Wall</span>
+          </div>
+
+          <div class="header-actions">
+            <!-- Search Button -->
+            <button class="glass-btn" id="searchToggleBtn" aria-label="Search mentors" title="Search mentors">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </button>
+
+            <!-- Filter & Sort Options Button -->
+            <button class="glass-btn" id="filterOptionsBtn" aria-label="Sort and filter options" title="Filter & Sort">
+              <svg viewBox="0 0 24 24">
+                <line x1="4" y1="21" x2="4" y2="14"></line>
+                <line x1="4" y1="10" x2="4" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12" y2="3"></line>
+                <line x1="20" y1="21" x2="20" y2="16"></line>
+                <line x1="20" y1="12" x2="20" y2="3"></line>
+                <line x1="1" y1="14" x2="7" y2="14"></line>
+                <line x1="9" y1="8" x2="15" y2="8"></line>
+                <line x1="17" y1="16" x2="23" y2="16"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Popover -->
+        <div class="filter-popover" id="filterPopover" role="menu">
+          <div class="filter-popover-item" data-sort="memories">
+            <span>Most Memories</span>
+            <span style="color:var(--color-amber);">✦</span>
+          </div>
+          <div class="filter-popover-item" data-sort="name">
+            <span>Alphabetical</span>
+          </div>
+          <div class="filter-popover-item" data-sort="default">
+            <span>Default Order</span>
+          </div>
+        </div>
+
+        <!-- Inline Search Bar (Toggled by Search icon) -->
+        <div class="search-bar-wrap" id="searchBarWrap">
+          <div class="search-input-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="mentorSearchInput" placeholder="Search by name, role or quote..." aria-label="Search mentors">
+          </div>
+        </div>
+
+        <!-- Headline -->
+        <div class="headline-area">
+          <span class="headline-prefix">Your Personal</span>
+          <h1 class="headline-title">Archive</h1>
+          <p class="headline-subtitle">Every tribute, memory, and lesson that shaped who you are.</p>
+        </div>
+
+        <!-- Frosted-Glass Stats Bar -->
+        <div class="stats-bar">
+          <div class="stat-item">
+            <span class="stat-number" id="statsMemoriesCount">16</span>
+            <span class="stat-label">Memories</span>
+          </div>
+          <div class="stat-divider" aria-hidden="true"></div>
+          <div class="stat-item">
+            <span class="stat-number" id="statsPinnedCount">5</span>
+            <span class="stat-label">Pinned</span>
+          </div>
+          <div class="stat-divider" aria-hidden="true"></div>
+          <div class="stat-item stat-curated">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+            <span class="stat-curated-text">Curated</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ====================================================================
+         TODAY'S MEMORY FEATURE (IMAGE 1)
+         ==================================================================== -->
+    <section class="today-memory-section" aria-label="Today's featured memory">
+      <div class="today-label">Today’s memory</div>
+      <blockquote class="today-quote" id="todayQuoteText">“She stayed after class until fractions finally clicked.”</blockquote>
+      <div class="today-footer">
+        <span class="today-author" id="todayAuthorText">Mrs. Anita Sharma</span>
+        <button class="today-another-link" id="anotherMemoryBtn">Another memory</button>
+      </div>
+    </section>
+    <div class="today-divider" aria-hidden="true"></div>
+
+    <!-- ====================================================================
+         SECTION 2: YOUR MENTORS (IMAGE 2 & 3)
+         ==================================================================== -->
+    <main class="mentors-section">
+      <!-- Title & Subtitle with dynamic count -->
+      <div class="section-header">
+        <div class="section-title-row">
+          <h2 class="section-title">Your Mentors</h2>
+          <span class="section-count-badge" id="peopleCountBadge">5 people</span>
+        </div>
+        <p class="section-subtitle">The people who shaped you.</p>
+      </div>
+
+      <!-- Anniversary Banner Card (Image 2) -->
+      <div class="anniversary-card" role="region" aria-label="Mentor Anniversary">
+        <span class="anniversary-badge">Anniversary</span>
+        <h3 class="anniversary-title">10 years ago this month, Mrs. Sharma became your teacher.</h3>
+        <div class="anniversary-bottom">
+          <div class="anniversary-avatar">AS</div>
+          <button class="anniversary-cta-btn" id="anniversaryThanksBtn">Write a thank-you</button>
+        </div>
+      </div>
+
+      <!-- Horizontally scrolling row of pill filter chips -->
+      <div class="chips-scroll-container" role="tablist" aria-label="Category filters">
+        <button class="filter-chip active" data-category="all" role="tab" aria-selected="true">All</button>
+        <button class="filter-chip" data-category="school" role="tab" aria-selected="false">School</button>
+        <button class="filter-chip" data-category="study" role="tab" aria-selected="false">Study</button>
+        <button class="filter-chip" data-category="work" role="tab" aria-selected="false">Work</button>
+        <button class="filter-chip" data-category="life" role="tab" aria-selected="false">Life</button>
+      </div>
+
+      <!-- Two-column flexbox grid - Exact match to Image 3 -->
+      <div class="mentor-grid" id="mentorCardsGrid">
+        
+        <!-- CARD 1: Mrs. Anita Sharma -->
+        <article class="mentor-card" data-category="school" data-memories="6" data-name="Anita Sharma">
+          <div class="card-banner banner-theme-1">
+            <button class="card-flip-btn" aria-label="Refresh memory" title="Flip / Refresh">
+              <svg viewBox="0 0 24 24"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+            </button>
+          </div>
+          <div class="card-avatar-wrap">
+            <div class="avatar-circle">
+              <span class="avatar-initials">AS</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <h3 class="mentor-name">Mrs. Anita Sharma</h3>
+            <span class="mentor-role">Teacher</span>
+            <span class="mentor-duration">Taught you for 3 years</span>
+
+            <div class="mentor-trait-pill">
+              <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              <span>Patient guide</span>
+            </div>
+
+            <span class="card-lesson-label">The lesson I carry</span>
+            <p class="mentor-quote">“She stayed after class until fractions finally clicked.”</p>
+          </div>
+
+          <hr class="card-divider">
+          <div class="card-footer accent-anita">
+            <svg viewBox="0 0 24 24">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+            </svg>
+            <span class="memory-count-text">6 memories</span>
+          </div>
+
+          <button class="send-thanks-btn" data-mentor="Mrs. Anita Sharma" aria-label="Send thanks to Mrs. Anita Sharma">
+            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <span>Send thanks</span>
+          </button>
+          <span class="last-thanked-text">Last thanked 2 weeks ago</span>
+        </article>
+
+        <!-- CARD 2: Dr. David Mitchell -->
+        <article class="mentor-card" data-category="study" data-memories="4" data-name="David Mitchell">
+          <div class="card-banner banner-theme-2">
+            <button class="card-flip-btn" aria-label="Refresh memory" title="Flip / Refresh">
+              <svg viewBox="0 0 24 24"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+            </button>
+          </div>
+          <div class="card-avatar-wrap">
+            <div class="avatar-circle">
+              <span class="avatar-initials">DM</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <h3 class="mentor-name">Dr. David Mitchell</h3>
+            <span class="mentor-role">Research Advisor</span>
+            <span class="mentor-duration">Guided you since 2019</span>
+
+            <div class="mentor-trait-pill">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+              <span>Showed me direction</span>
+            </div>
+
+            <span class="card-lesson-label">The lesson I carry</span>
+            <p class="mentor-quote">“He taught me to ask better questions, not quicker answers.”</p>
+          </div>
+
+          <hr class="card-divider">
+          <div class="card-footer accent-david">
+            <svg viewBox="0 0 24 24">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+            </svg>
+            <span class="memory-count-text">4 memories</span>
+          </div>
+
+          <button class="send-thanks-btn" data-mentor="Dr. David Mitchell" aria-label="Send thanks to Dr. David Mitchell">
+            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <span>Send thanks</span>
+          </button>
+          <span class="last-thanked-text">Last thanked last month</span>
+        </article>
+
+        <!-- CARD 3: Vikram Rao -->
+        <article class="mentor-card" data-category="work" data-memories="3" data-name="Vikram Rao">
+          <div class="card-banner banner-theme-3">
+            <button class="card-flip-btn" aria-label="Refresh memory" title="Flip / Refresh">
+              <svg viewBox="0 0 24 24"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+            </button>
+          </div>
+          <div class="card-avatar-wrap">
+            <div class="avatar-circle">
+              <span class="avatar-initials">VR</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <h3 class="mentor-name">Vikram Rao</h3>
+            <span class="mentor-role">Engineering Director</span>
+            <span class="mentor-duration">Mentored for 4 years</span>
+
+            <div class="mentor-trait-pill">
+              <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+              <span>Master craftsman</span>
+            </div>
+
+            <span class="card-lesson-label">The lesson I carry</span>
+            <p class="mentor-quote">“His toughest code review made me a far better engineer.”</p>
+          </div>
+
+          <hr class="card-divider">
+          <div class="card-footer accent-vikram">
+            <svg viewBox="0 0 24 24">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+            </svg>
+            <span class="memory-count-text">3 memories</span>
+          </div>
+
+          <button class="send-thanks-btn" data-mentor="Vikram Rao" aria-label="Send thanks to Vikram Rao">
+            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <span>Send thanks</span>
+          </button>
+          <span class="last-thanked-text">Last thanked 3 days ago</span>
+        </article>
+
+        <!-- CARD 4: Priya Nair -->
+        <article class="mentor-card" data-category="work" data-memories="2" data-name="Priya Nair">
+          <div class="card-banner banner-theme-4">
+            <button class="card-flip-btn" aria-label="Refresh memory" title="Flip / Refresh">
+              <svg viewBox="0 0 24 24"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+            </button>
+          </div>
+          <div class="card-avatar-wrap">
+            <div class="avatar-circle">
+              <span class="avatar-initials">PN</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <h3 class="mentor-name">Priya Nair</h3>
+            <span class="mentor-role">Design Lead</span>
+            <span class="mentor-duration">Guided you since 2021</span>
+
+            <div class="mentor-trait-pill">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h8"></path><path d="M12 8v8"></path></svg>
+              <span>Creative clarity</span>
+            </div>
+
+            <span class="card-lesson-label">The lesson I carry</span>
+            <p class="mentor-quote">“She told me to trust my taste and ship the idea anyway.”</p>
+          </div>
+
+          <hr class="card-divider">
+          <div class="card-footer accent-priya">
+            <svg viewBox="0 0 24 24">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+            </svg>
+            <span class="memory-count-text">2 memories</span>
+          </div>
+
+          <button class="send-thanks-btn" data-mentor="Priya Nair" aria-label="Send thanks to Priya Nair">
+            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <span>Send thanks</span>
+          </button>
+          <span class="last-thanked-text">Last thanked 1 week ago</span>
+        </article>
+
+        <!-- CARD 5: Rohan Kulkarni -->
+        <article class="mentor-card" data-category="life" data-memories="3" data-name="Rohan Kulkarni">
+          <div class="card-banner banner-theme-5">
+            <button class="card-flip-btn" aria-label="Refresh memory" title="Flip / Refresh">
+              <svg viewBox="0 0 24 24"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+            </button>
+          </div>
+          <div class="card-avatar-wrap">
+            <div class="avatar-circle">
+              <span class="avatar-initials">RK</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <h3 class="mentor-name">Rohan Kulkarni</h3>
+            <span class="mentor-role">Coach</span>
+            <span class="mentor-duration">Mentored for 5 years</span>
+
+            <div class="mentor-trait-pill">
+              <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              <span>Quiet anchor</span>
+            </div>
+
+            <span class="card-lesson-label">The lesson I carry</span>
+            <p class="mentor-quote">“Resilience is not silently enduring the storm; it is remembering why you set sail.”</p>
+          </div>
+
+          <hr class="card-divider">
+          <div class="card-footer accent-rohan">
+            <svg viewBox="0 0 24 24">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+            </svg>
+            <span class="memory-count-text">3 memories</span>
+          </div>
+
+          <button class="send-thanks-btn" data-mentor="Rohan Kulkarni" aria-label="Send thanks to Rohan Kulkarni">
+            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <span>Send thanks</span>
+          </button>
+          <span class="last-thanked-text">Last thanked 2 months ago</span>
+        </article>
+
+        <!-- LAST TILE: "Add a mentor" Card with dashed border & amber plus -->
+        <button class="add-mentor-card" id="openAddMentorModalBtn" aria-label="Add a new mentor tribute">
+          <div class="add-icon-circle" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </div>
+          <span class="add-title">Add a mentor</span>
+          <span class="add-subtitle">Honour someone who helped you grow</span>
+        </button>
+
+      </div>
+
+      <!-- Quick Theme Switcher Pill -->
+      <div class="bottom-bar">
+        <button class="theme-toggle-pill" id="themeToggleBtn" aria-label="Toggle light or dark theme">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <span id="themeToggleLabel">Switch to Dark Mode</span>
+        </button>
+      </div>
+    </main>
+
+    <!-- Bottom Navigation Bar from Reference Screenshot -->
+    <nav class="bottom-nav-bar" aria-label="Mobile Navigation">
+      <button class="nav-btn" aria-label="Home" title="Home">
+        <svg viewBox="0 0 24 24">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+      </button>
+
+      <button class="nav-btn" aria-label="Explore" title="Explore">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+        </svg>
+      </button>
+
+      <button class="nav-btn" id="navAddBtn" aria-label="Create Tribute" title="Create Tribute">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="16"></line>
+          <line x1="8" y1="12" x2="16" y2="12"></line>
+        </svg>
+      </button>
+
+      <!-- Active Tab: Archive/Memory Wall with Amber Pill -->
+      <button class="nav-btn active" aria-label="Archive" title="Archive (Active)">
+        <span class="nav-pill">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+        </span>
+      </button>
+
+      <button class="nav-btn" aria-label="Profile" title="Profile">
+        <svg viewBox="0 0 24 24">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- ====================================================================
+       ADD MENTOR MODAL SHEET
+       ==================================================================== -->
+  <div class="modal-overlay" id="addMentorModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-sheet">
+      <div class="modal-drag-handle" aria-hidden="true"></div>
+      <div class="modal-header-row">
+        <h3 class="modal-title" id="modalTitle">Honour a Mentor</h3>
+        <button class="modal-close-btn" id="closeAddMentorModalBtn" aria-label="Close dialog">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <form id="newMentorForm">
+        <div class="form-group">
+          <label class="form-label" for="mentorNameInput">Mentor Name</label>
+          <input class="form-input" id="mentorNameInput" required placeholder="e.g. Prof. Maya Sen" autocomplete="off">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="mentorRoleInput">Role or Title</label>
+          <input class="form-input" id="mentorRoleInput" required placeholder="e.g. Physics Professor, Life Guide" autocomplete="off">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="mentorCategorySelect">Category</label>
+          <select class="form-select" id="mentorCategorySelect">
+            <option value="school">School</option>
+            <option value="study">Study</option>
+            <option value="work">Work</option>
+            <option value="life">Life</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="mentorQuoteInput">A Lesson or Words You Cherish</label>
+          <textarea class="form-textarea" id="mentorQuoteInput" required placeholder="“Their guiding words or the lesson that stayed with you...”"></textarea>
+        </div>
+
+        <button type="submit" class="modal-submit-btn">Save to Memory Wall</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       VANILLA JAVASCRIPT
+       - Category filter tabs
+       - Real-time search by name, role, quote
+       - Dynamic "X people" count updates
+       - Sort options popover
+       - Add mentor form submission (in-memory, no localStorage)
+       - Theme toggle (light/dark)
+       ==================================================================== -->
+  <script>
+    (function() {
+      // DOM Elements
+      const filterChips = document.querySelectorAll('.filter-chip');
+      const mentorGrid = document.getElementById('mentorCardsGrid');
+      const addMentorBtn = document.getElementById('openAddMentorModalBtn');
+      const peopleBadge = document.getElementById('peopleCountBadge');
+      const searchToggleBtn = document.getElementById('searchToggleBtn');
+      const searchBarWrap = document.getElementById('searchBarWrap');
+      const searchInput = document.getElementById('mentorSearchInput');
+      const filterOptionsBtn = document.getElementById('filterOptionsBtn');
+      const filterPopover = document.getElementById('filterPopover');
+      const themeToggleBtn = document.getElementById('themeToggleBtn');
+      const themeToggleLabel = document.getElementById('themeToggleLabel');
+      
+      const modal = document.getElementById('addMentorModal');
+      const closeModalBtn = document.getElementById('closeAddMentorModalBtn');
+      const newMentorForm = document.getElementById('newMentorForm');
+
+      let currentCategory = 'all';
+      let searchQuery = '';
+      let currentSort = 'default';
+
+      // 1. Update Card Visibility & Count
+      function updateVisibility() {
+        const cards = mentorGrid.querySelectorAll('.mentor-card');
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+          const cat = card.dataset.category || '';
+          const cardText = card.textContent.toLowerCase();
+          const matchesCategory = (currentCategory === 'all' || cat.toLowerCase() === currentCategory.toLowerCase());
+          const matchesSearch = !searchQuery || cardText.includes(searchQuery);
+
+          if (matchesCategory && matchesSearch) {
+            card.style.display = 'flex';
+            visibleCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        // Update badge text smoothly
+        peopleBadge.textContent = visibleCount === 1 ? '1 person' : `${visibleCount} people`;
+      }
+
+      // 2. Category Filter Chip Clicks
+      filterChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          filterChips.forEach(c => {
+            c.classList.remove('active');
+            c.setAttribute('aria-selected', 'false');
+          });
+          chip.classList.add('active');
+          chip.setAttribute('aria-selected', 'true');
+          currentCategory = chip.dataset.category || 'all';
+          updateVisibility();
+        });
+      });
+
+      // 3. Search Bar Toggle & Input Handling
+      searchToggleBtn.addEventListener('click', () => {
+        const isOpen = searchBarWrap.classList.toggle('open');
+        if (isOpen) {
+          searchInput.focus();
+        } else {
+          searchInput.value = '';
+          searchQuery = '';
+          updateVisibility();
+        }
+      });
+
+      searchInput.addEventListener('input', (e) => {
+        searchQuery = e.target.value.trim().toLowerCase();
+        updateVisibility();
+      });
+
+      // 4. Filter Popover (Sort options)
+      filterOptionsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        filterPopover.classList.toggle('open');
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!filterPopover.contains(e.target) && e.target !== filterOptionsBtn) {
+          filterPopover.classList.remove('open');
+        }
+      });
+
+      filterPopover.querySelectorAll('.filter-popover-item').forEach(item => {
+        item.addEventListener('click', () => {
+          currentSort = item.dataset.sort;
+          filterPopover.classList.remove('open');
+          applySort();
+        });
+      });
+
+      function applySort() {
+        const cards = Array.from(mentorGrid.querySelectorAll('.mentor-card'));
+        if (currentSort === 'memories') {
+          cards.sort((a, b) => parseInt(b.dataset.memories || 0, 10) - parseInt(a.dataset.memories || 0, 10));
+        } else if (currentSort === 'name') {
+          cards.sort((a, b) => (a.dataset.name || '').localeCompare(b.dataset.name || ''));
+        }
+        
+        // Re-append sorted cards before the Add Mentor button
+        cards.forEach(card => {
+          mentorGrid.insertBefore(card, addMentorBtn);
+        });
+        updateVisibility();
+      }
+
+      // 5. Add Mentor Modal Logic (In-Memory, strictly NO localStorage)
+      const openModal = () => {
+        modal.classList.add('active');
+        document.getElementById('mentorNameInput').focus();
+      };
+
+      addMentorBtn.addEventListener('click', openModal);
+      const navAddBtn = document.getElementById('navAddBtn');
+      if (navAddBtn) {
+        navAddBtn.addEventListener('click', openModal);
+      }
+
+      function closeModal() {
+        modal.classList.remove('active');
+        newMentorForm.reset();
+      }
+
+      closeModalBtn.addEventListener('click', closeModal);
+
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          closeModal();
+        }
+      });
+
+      // Another Memory Button (Cycles today's memories)
+      const featuredMemories = [
+        { quote: "“She stayed after class until fractions finally clicked.”", author: "Mrs. Anita Sharma" },
+        { quote: "“He taught me to ask better questions, not quicker answers.”", author: "Dr. David Mitchell" },
+        { quote: "“His toughest code review made me a far better engineer.”", author: "Vikram Rao" },
+        { quote: "“She told me to trust my taste and ship the idea anyway.”", author: "Priya Nair" },
+        { quote: "“Resilience is not silently enduring the storm; it is remembering why you set sail.”", author: "Rohan Kulkarni" }
+      ];
+      let currentMemIdx = 0;
+      const todayQuoteText = document.getElementById('todayQuoteText');
+      const todayAuthorText = document.getElementById('todayAuthorText');
+      const anotherMemoryBtn = document.getElementById('anotherMemoryBtn');
+
+      if (anotherMemoryBtn) {
+        anotherMemoryBtn.addEventListener('click', () => {
+          currentMemIdx = (currentMemIdx + 1) % featuredMemories.length;
+          todayQuoteText.style.opacity = '0';
+          todayAuthorText.style.opacity = '0';
+          setTimeout(() => {
+            todayQuoteText.textContent = featuredMemories[currentMemIdx].quote;
+            todayAuthorText.textContent = featuredMemories[currentMemIdx].author;
+            todayQuoteText.style.opacity = '1';
+            todayAuthorText.style.opacity = '1';
+          }, 150);
+        });
+      }
+
+      // Anniversary "Write a thank-you" button
+      const anniversaryThanksBtn = document.getElementById('anniversaryThanksBtn');
+      if (anniversaryThanksBtn) {
+        anniversaryThanksBtn.addEventListener('click', () => {
+          document.getElementById('mentorNameInput').value = 'Mrs. Anita Sharma';
+          document.getElementById('mentorRoleInput').value = 'Teacher';
+          document.getElementById('mentorCategorySelect').value = 'school';
+          document.getElementById('mentorQuoteInput').value = 'Thank you for believing in me a decade ago and forever shaping my journey.';
+          openModal();
+        });
+      }
+
+      // "Send thanks" buttons on cards
+      document.addEventListener('click', (e) => {
+        const thanksBtn = e.target.closest('.send-thanks-btn');
+        if (thanksBtn) {
+          const originalHTML = thanksBtn.innerHTML;
+          thanksBtn.innerHTML = `<span>Thanks sent ❤️</span>`;
+          thanksBtn.style.background = '#E89146';
+          const card = thanksBtn.closest('.mentor-card');
+          if (card) {
+            const lastThanked = card.querySelector('.last-thanked-text');
+            if (lastThanked) lastThanked.textContent = 'Just now';
+          }
+          setTimeout(() => {
+            thanksBtn.innerHTML = originalHTML;
+            thanksBtn.style.background = '';
+          }, 2600);
+        }
+
+        // Card flip button
+        const flipBtn = e.target.closest('.card-flip-btn');
+        if (flipBtn) {
+          flipBtn.style.transform = 'rotate(360deg)';
+          setTimeout(() => { flipBtn.style.transform = ''; }, 400);
+        }
+      });
+
+      newMentorForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('mentorNameInput').value.trim();
+        const role = document.getElementById('mentorRoleInput').value.trim();
+        const category = document.getElementById('mentorCategorySelect').value;
+        const quote = document.getElementById('mentorQuoteInput').value.trim();
+
+        if (!name || !role || !quote) return;
+
+        const initials = name.replace(/^(Mrs\.|Mr\.|Dr\.|Prof\.)\s+/i, '').trim().split(/\s+/).map(n => n[0]).slice(0, 2).join('').toUpperCase() || 'M';
+        const bannerThemes = ['banner-theme-1', 'banner-theme-2', 'banner-theme-3', 'banner-theme-4', 'banner-theme-5'];
+        const randomBanner = bannerThemes[Math.floor(Math.random() * bannerThemes.length)];
+
+        // Create new article card
+        const card = document.createElement('article');
+        card.className = 'mentor-card';
+        card.dataset.category = category;
+        card.dataset.memories = '1';
+        card.dataset.name = name;
+
+        card.innerHTML = `
+          <div class="card-banner ${randomBanner}">
+            <button class="card-flip-btn" aria-label="Refresh memory" title="Flip / Refresh">
+              <svg viewBox="0 0 24 24"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+            </button>
+          </div>
+          <div class="card-avatar-wrap">
+            <div class="avatar-circle">
+              <span class="avatar-initials">${initials}</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <h3 class="mentor-name">${escapeHTML(name)}</h3>
+            <span class="mentor-role">${escapeHTML(role)}</span>
+            <span class="mentor-duration">Guided you with grace</span>
+
+            <div class="mentor-trait-pill">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+              <span>Inspiring presence</span>
+            </div>
+
+            <span class="card-lesson-label">The lesson I carry</span>
+            <p class="mentor-quote">“${escapeHTML(quote)}”</p>
+          </div>
+
+          <hr class="card-divider">
+          <div class="card-footer accent-anita">
+            <svg viewBox="0 0 24 24">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+            </svg>
+            <span class="memory-count-text">1 memory</span>
+          </div>
+
+          <button class="send-thanks-btn" data-mentor="${escapeHTML(name)}" aria-label="Send thanks to ${escapeHTML(name)}">
+            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            <span>Send thanks</span>
+          </button>
+          <span class="last-thanked-text">Just added</span>
+        `;
+
+        mentorGrid.insertBefore(card, addMentorBtn);
+
+        // Update stats bar memories count
+        const statsMemoriesEl = document.getElementById('statsMemoriesCount');
+        const statsPinnedEl = document.getElementById('statsPinnedCount');
+        if (statsMemoriesEl) {
+          statsMemoriesEl.textContent = parseInt(statsMemoriesEl.textContent, 10) + 1;
+        }
+        if (statsPinnedEl) {
+          statsPinnedEl.textContent = parseInt(statsPinnedEl.textContent, 10) + 1;
+        }
+
+        closeModal();
+        updateVisibility();
+      });
+
+      function escapeHTML(str) {
+        return str.replace(/[&<>'"]/g, tag => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          "'": '&#39;',
+          '"': '&quot;'
+        }[tag] || tag));
+      }
+
+      function capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+      }
+
+      // Theme Toggle (In-memory toggle between Light & Dark)
+      let isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      applyTheme(isDark);
+
+      themeToggleBtn.addEventListener('click', () => {
+        isDark = !isDark;
+        applyTheme(isDark);
+      });
+
+      function applyTheme(dark) {
+        document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+        themeToggleLabel.textContent = dark ? 'Switch to Light Mode' : 'Switch to Dark Mode';
+      }
+
+    })();
+  </script>
+</body>
+</html>
