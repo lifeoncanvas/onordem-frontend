@@ -106,7 +106,9 @@ export default function MentorCard({
         onPress={onPress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
-        accessibilityRole="button"
+        // On web a "button" role renders a <button>, and the bookmark/avatar
+        // buttons inside it would then be invalid nested <button>s.
+        accessibilityRole={Platform.OS === "web" ? undefined : "button"}
         accessibilityLabel={`Open ${mentor.name}'s mentor profile`}
         style={[
           styles.card,
