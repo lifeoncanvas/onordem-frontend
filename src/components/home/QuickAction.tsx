@@ -58,11 +58,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 6,
     position: "relative",
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
-    elevation: 3,
+    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.4)",
   },
   label: {
     fontSize: 11.5,

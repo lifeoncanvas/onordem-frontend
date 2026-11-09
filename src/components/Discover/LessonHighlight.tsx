@@ -115,11 +115,7 @@ const styles = StyleSheet.create({
     borderWidth: 1.2,
     borderColor: "rgba(236, 143, 62, 0.3)",
     position: "relative",
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
-    elevation: 3,
+    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.06)",
   },
   quoteSymbol: {
     fontSize: 64,
@@ -184,11 +180,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 18,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 2,
+    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
   },
   saveBtnInactive: {
     backgroundColor: Palette.oceanTeal, // Ocean Teal primary

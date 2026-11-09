@@ -179,11 +179,7 @@ const styles = StyleSheet.create({
     backgroundColor: Palette.surfaceCard,
     borderWidth: 1.2,
     borderColor: Palette.borderSubtle,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 10,
-    elevation: 3,
+    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.35)",
   },
   cardSurface: {
     padding: 16,

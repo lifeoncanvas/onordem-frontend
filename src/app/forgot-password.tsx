@@ -15,7 +15,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { Palette } from "@/constants/theme";
+import { Palette, alphaColor } from "@/constants/theme";
 import {
   requestPasswordReset,
   verifyResetCode,
@@ -740,10 +740,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     ...Platform.select({
       ios: {
-        shadowColor: THEME.primary,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.08,
-        shadowRadius: 6,
+        boxShadow: `0px 2px 6px ${alphaColor(THEME.primary, 0.08)}`,
       },
       android: {
         elevation: 2,
@@ -781,10 +778,7 @@ const styles = StyleSheet.create({
     marginBottom: 18,
     ...Platform.select({
       ios: {
-        shadowColor: THEME.primary,
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.08,
-        shadowRadius: 10,
+        boxShadow: `0px 4px 10px ${alphaColor(THEME.primary, 0.08)}`,
       },
       android: {
         elevation: 2,
@@ -847,10 +841,7 @@ const styles = StyleSheet.create({
     padding: 24,
     ...Platform.select({
       ios: {
-        shadowColor: THEME.primary,
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.06,
-        shadowRadius: 14,
+        boxShadow: `0px 4px 14px ${alphaColor(THEME.primary, 0.06)}`,
       },
       android: {
         elevation: 3,
@@ -881,10 +872,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     ...Platform.select({
       ios: {
-        shadowColor: THEME.primary,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 6,
+        boxShadow: `0px 2px 6px ${alphaColor(THEME.primary, 0.05)}`,
       },
       android: {
         elevation: 2,
@@ -897,10 +885,7 @@ const styles = StyleSheet.create({
     backgroundColor: THEME.card,
     ...Platform.select({
       ios: {
-        shadowColor: THEME.primary,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.14,
-        shadowRadius: 8,
+        boxShadow: `0px 2px 8px ${alphaColor(THEME.primary, 0.14)}`,
       },
       android: {
         elevation: 3,
@@ -968,10 +953,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     ...Platform.select({
       ios: {
-        shadowColor: THEME.primary,
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.35,
-        shadowRadius: 14,
+        boxShadow: `0px 6px 14px ${alphaColor(THEME.primary, 0.35)}`,
       },
       android: {
         elevation: 6,
@@ -1051,10 +1033,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     ...Platform.select({
       ios: {
-        shadowColor: THEME.heading,
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.2,
-        shadowRadius: 24,
+        boxShadow: `0px 8px 24px ${alphaColor(THEME.heading, 0.2)}`,
       },
       android: {
         elevation: 10,

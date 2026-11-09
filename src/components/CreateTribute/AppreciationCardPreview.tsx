@@ -79,10 +79,9 @@ export default function AppreciationCardPreview({
           <LinearGradient
             colors={["rgba(0,0,0,0)", "rgba(0,0,0,0.25)", "rgba(0,0,0,0.85)"]}
             locations={[0, 0.5, 1]}
-            style={StyleSheet.absoluteFill}
-            pointerEvents="none"
+            style={[StyleSheet.absoluteFill, { pointerEvents: "none" }]}
           />
-          <View style={styles.photoText} pointerEvents="none">
+          <View style={[styles.photoText, { pointerEvents: "none" }]}>
             <Text style={styles.eyebrow} numberOfLines={1}>
               {relationship && relationship !== "Other" ? `With gratitude · ${relationship}` : "With gratitude"}
             </Text>

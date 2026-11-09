@@ -5,9 +5,10 @@ import {
   StyleSheet,
   Text,
   View,
+  Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Palette } from "@/constants/theme";
+import { Palette, alphaColor } from "@/constants/theme";
 import { CreationOptionItem } from "@/types/create";
 
 interface CreationStudioCardProps {
@@ -30,13 +31,13 @@ export default function CreationStudioCard({
     Animated.parallel([
       Animated.spring(scaleAnim, {
         toValue: pressed ? 0.96 : hovered ? 1.025 : 1,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== "web",
         speed: pressed ? 30 : 20,
         bounciness: pressed ? 3 : 5,
       }),
       Animated.spring(liftAnim, {
         toValue: pressed ? -5 : hovered ? -3 : 0,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== "web",
         speed: pressed ? 30 : 20,
         bounciness: pressed ? 3 : 5,
       }),
@@ -209,11 +210,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderWidth: 1.2,
     borderColor: "rgba(255, 255, 255, 0.08)",
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.22,
-    shadowRadius: 14,
-    elevation: 4,
+    boxShadow: "0px 6px 14px rgba(0, 0, 0, 0.22)",
     position: "relative",
     overflow: "hidden",
     minHeight: 196,
@@ -221,11 +218,7 @@ const styles = StyleSheet.create({
   },
   cardActiveState: {
     borderColor: Palette.accentSky,
-    shadowColor: Palette.accentSky,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
-    elevation: 5,
+    boxShadow: `0px 8px 12px ${alphaColor(Palette.accentSky, 0.25)}`,
   },
 
   // Bespoke styles per card
@@ -397,11 +390,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
+    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
   },
   actionArrowCircle: {
     width: 30,
@@ -410,10 +399,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.18,
-    shadowRadius: 4,
-    elevation: 2,
+    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.18)",
   },
 });

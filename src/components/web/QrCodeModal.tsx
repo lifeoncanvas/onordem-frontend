@@ -68,13 +68,13 @@ export default function QrCodeModal({
             toValue: 1,
             duration: 1800,
             easing: Easing.inOut(Easing.quad),
-            useNativeDriver: true,
+            useNativeDriver: Platform.OS !== "web",
           }),
           Animated.timing(laserAnim, {
             toValue: 0,
             duration: 1800,
             easing: Easing.inOut(Easing.quad),
-            useNativeDriver: true,
+            useNativeDriver: Platform.OS !== "web",
           }),
         ])
       );
@@ -498,11 +498,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderWidth: 1,
     borderColor: "#303030",
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 16 },
-    shadowOpacity: 0.5,
-    shadowRadius: 32,
-    elevation: 12,
+    boxShadow: "0px 16px 32px rgba(0, 0, 0, 0.5)",
   },
   closeBtn: {
     position: "absolute",
@@ -583,10 +579,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 24,
     marginBottom: 16,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.2,
-    shadowRadius: 16,
+    boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.2)",
   },
   installSteps: {
     flexDirection: "row",
@@ -839,10 +832,7 @@ const styles = StyleSheet.create({
     right: "15%",
     height: 2,
     backgroundColor: "#34D399",
-    shadowColor: "#34D399",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.9,
-    shadowRadius: 8,
+    boxShadow: "0px 0px 8px rgba(52, 211, 153, 0.9)",
     pointerEvents: "none",
   },
   demoScanRow: {

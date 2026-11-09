@@ -83,11 +83,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: Palette.pureWhite,
     padding: 16,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
-    elevation: 4,
+    boxShadow: "0px 3px 10px rgba(0, 0, 0, 0.08)",
     borderWidth: 1,
     borderColor: Palette.borderSubtle,
     // Faint ruled-paper feel

@@ -85,11 +85,7 @@ const styles = StyleSheet.create({
     backgroundColor: Palette.pureWhite,
     borderWidth: 1,
     borderColor: Palette.borderSubtle,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
-    elevation: 3,
+    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.08)",
   },
   cardSurface: {
     padding: 16,

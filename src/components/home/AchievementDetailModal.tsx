@@ -318,11 +318,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
     overflow: "hidden",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 16,
-    elevation: 20,
+    boxShadow: "0px -4px 16px rgba(0, 0, 0, 0.25)",
   },
   heroContainer: {
     height: 250,
@@ -432,11 +428,7 @@ const styles = StyleSheet.create({
   },
   chipItemActive: {
     backgroundColor: Palette.pureWhite,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 4,
-    elevation: 2,
+    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.12)",
   },
   chipText: {
     fontSize: 12.5,
@@ -464,11 +456,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     borderWidth: 1.2,
     borderColor: Palette.borderSubtle,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 2,
+    boxShadow: "0px 3px 8px rgba(0, 0, 0, 0.06)",
   },
   mentorAvatarWrap: {
     position: "relative",

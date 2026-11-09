@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { WallCategory, WallFilterTab } from "@/types/memoryWall";
@@ -45,7 +46,7 @@ function FilterChip({ tab, isActive, onSelect }: FilterChipProps) {
       toValue: isActive ? 1.03 : 1,
       speed: 24,
       bounciness: 4,
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== "web",
     }).start();
   }, [isActive, scale]);
 
@@ -128,20 +129,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#161616",
     borderWidth: 1.2,
     borderColor: "rgba(255, 255, 255, 0.08)",
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 2,
+    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.15)",
   },
   chipActive: {
     backgroundColor: "#FFFFFF",
     borderColor: "#FFFFFF",
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    elevation: 3,
+    boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.2)",
   },
   chipText: {
     fontSize: 13.5,

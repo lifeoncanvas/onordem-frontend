@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Text,
   View,
+  Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Palette } from "@/constants/theme";
@@ -23,7 +24,7 @@ export default function TributeDesignFooter({
   const handlePressIn = () => {
     Animated.spring(scaleAnim, {
       toValue: 0.97,
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== "web",
       speed: 25,
       bounciness: 4,
     }).start();
@@ -32,7 +33,7 @@ export default function TributeDesignFooter({
   const handlePressOut = () => {
     Animated.spring(scaleAnim, {
       toValue: 1,
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== "web",
       speed: 20,
       bounciness: 6,
     }).start();
@@ -115,11 +116,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 22,
     paddingVertical: 14,
     borderRadius: 999,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.22,
-    shadowRadius: 14,
-    elevation: 5,
+    boxShadow: "0px 6px 14px rgba(0, 0, 0, 0.22)",
   },
   buttonTextGroup: {},
   buttonLabel: {

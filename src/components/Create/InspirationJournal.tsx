@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Palette } from "@/constants/theme";
@@ -29,12 +30,12 @@ export default function InspirationJournal({
       Animated.timing(fadeAnim, {
         toValue: 0.1,
         duration: 150,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== "web",
       }),
       Animated.timing(fadeAnim, {
         toValue: 1,
         duration: 250,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== "web",
       }),
     ]).start();
 
@@ -173,11 +174,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderWidth: 1.2,
     borderColor: Palette.borderSubtle,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.12,
-    shadowRadius: 14,
-    elevation: 3,
+    boxShadow: "0px 6px 14px rgba(0, 0, 0, 0.12)",
     position: "relative",
     overflow: "hidden",
   },
@@ -274,11 +271,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 9,
     borderRadius: 14,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
-    elevation: 3,
+    boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.25)",
   },
   startBtnText: {
     fontSize: 12.5,

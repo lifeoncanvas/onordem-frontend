@@ -122,20 +122,12 @@ const styles = StyleSheet.create({
   chipUnselected: {
     backgroundColor: "#161616",
     borderColor: "rgba(255, 255, 255, 0.08)",
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 1,
+    boxShadow: "0px 1px 4px rgba(0, 0, 0, 0.1)",
   },
   chipSelected: {
     backgroundColor: "#FFFFFF",
     borderColor: "#FFFFFF",
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
-    elevation: 3,
+    boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.25)",
   },
   iconWrap: {
     width: 24,

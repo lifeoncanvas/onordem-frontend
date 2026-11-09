@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Palette } from "@/constants/theme";
@@ -79,13 +80,13 @@ function FeelingPromptCard({
     Animated.parallel([
       Animated.spring(scaleAnim, {
         toValue: pressed ? 0.96 : hovered ? 1.025 : 1,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== "web",
         speed: pressed ? 30 : 20,
         bounciness: pressed ? 3 : 5,
       }),
       Animated.spring(liftAnim, {
         toValue: pressed ? -5 : hovered ? -3 : 0,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== "web",
         speed: pressed ? 30 : 20,
         bounciness: pressed ? 3 : 5,
       }),
@@ -229,28 +230,16 @@ const styles = StyleSheet.create({
   cardUnselected: {
     backgroundColor: Palette.mintMist, // Soft Mint Mist background
     borderColor: "rgba(236, 143, 62, 0.22)",
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 5,
-    elevation: 2,
+    boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.04)",
   },
   cardSelected: {
     backgroundColor: Palette.oceanTeal, // Ocean Teal when active
     borderColor: Palette.oceanTeal,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 4,
+    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.25)",
   },
   cardPressed: {
     borderColor: "rgba(236, 143, 62, 0.7)",
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.22,
-    shadowRadius: 12,
-    elevation: 7,
+    boxShadow: "0px 8px 12px rgba(0, 0, 0, 0.22)",
   },
   cardHeader: {
     flexDirection: "row",

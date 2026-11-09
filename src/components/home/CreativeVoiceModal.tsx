@@ -127,12 +127,12 @@ export default function CreativeVoiceModal({
         Animated.timing(pulseAnim, {
           toValue: 1.25,
           duration: 850,
-          useNativeDriver: true,
+          useNativeDriver: Platform.OS !== "web",
         }),
         Animated.timing(pulseAnim, {
           toValue: 1,
           duration: 850,
-          useNativeDriver: true,
+          useNativeDriver: Platform.OS !== "web",
         }),
       ])
     );
@@ -752,11 +752,7 @@ const styles = StyleSheet.create({
     backgroundColor: Palette.surfaceElevated,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 5,
-    elevation: 2,
+    boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.12)",
   },
   modeTabs: {
     flexDirection: "row",
@@ -849,10 +845,7 @@ const styles = StyleSheet.create({
     width: 14,
     borderRadius: 8,
     backgroundColor: Palette.accentSky,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 3,
+    boxShadow: "0px 4px 3px rgba(0, 0, 0, 0.12)",
   },
   transcriptSection: {
     flex: 1,
@@ -943,10 +936,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 22,
     paddingVertical: 12,
     borderRadius: 24,
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
+    boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.2)",
   },
   playPreviewText: {
     color: "#111111",

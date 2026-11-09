@@ -8,6 +8,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -150,7 +151,7 @@ export default function CreateScreen() {
     Animated.timing(entranceFade, {
       toValue: 1,
       duration: 500,
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== "web",
     }).start();
   }, [entranceFade]);
 
@@ -160,13 +161,13 @@ export default function CreateScreen() {
       Animated.timing(toastFade, {
         toValue: 1,
         duration: 250,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== "web",
       }),
       Animated.delay(2600),
       Animated.timing(toastFade, {
         toValue: 0,
         duration: 300,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== "web",
       }),
     ]).start(() => {
       setToastMessage(null);
@@ -419,11 +420,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderRadius: 14,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
+    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
   },
   toastText: {
     fontSize: 12.5,

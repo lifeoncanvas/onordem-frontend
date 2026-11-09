@@ -140,11 +140,7 @@ const styles = StyleSheet.create({
     padding: 18,
     borderWidth: 1.5,
     borderColor: "rgba(255, 184, 153, 0.35)",
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.22,
-    shadowRadius: 14,
-    elevation: 4,
+    boxShadow: "0px 6px 14px rgba(0, 0, 0, 0.22)",
   },
   topInfoRow: {
     flexDirection: "row",

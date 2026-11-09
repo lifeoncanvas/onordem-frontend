@@ -53,11 +53,7 @@ const styles = StyleSheet.create({
   },
   floatCard: {
     marginBottom: 24,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
-    elevation: 10,
+    boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.3)",
   },
   cardGradient: {
     width: 80,
@@ -83,11 +79,7 @@ const styles = StyleSheet.create({
   cta: {
     borderRadius: 14,
     overflow: "hidden",
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 6,
+    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)",
   },
   ctaGradient: {
     flexDirection: "row",

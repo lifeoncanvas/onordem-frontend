@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AppFonts, getCategoryAccent, Palette, SystemColors } from "@/constants/theme";
@@ -59,7 +60,7 @@ export default function MentorCard({
       toValue: 0.975,
       speed: 30,
       bounciness: 0,
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== "web",
     }).start();
   };
 
@@ -68,7 +69,7 @@ export default function MentorCard({
       toValue: 1,
       speed: 25,
       bounciness: 6,
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== "web",
     }).start();
   };
 
@@ -278,18 +279,12 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     borderWidth: 1.2,
     borderColor: Palette.borderSubtle,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.45,
-    shadowRadius: 14,
-    elevation: 6,
+    boxShadow: "0px 8px 14px rgba(0, 0, 0, 0.45)",
     overflow: "visible",
   },
   cardSelected: {
     borderColor: Palette.accentSky,
-    shadowColor: "#000000",
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
+    boxShadow: "0px 8px 10px rgba(0, 0, 0, 0.2)",
   },
 
   /* ── HEADER ── */
@@ -388,11 +383,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 2,
     borderColor: SystemColors.hairline,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
-    elevation: 4,
+    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.4)",
   },
   avatarRingSelected: {
     borderColor: Palette.accentSky,

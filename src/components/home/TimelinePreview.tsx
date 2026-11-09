@@ -159,11 +159,7 @@ const styles = StyleSheet.create({
     position: "relative",
     borderWidth: 1.2,
     borderColor: Palette.borderSubtle,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.45,
-    shadowRadius: 16,
-    elevation: 6,
+    boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.45)",
   },
   gradientBg: {
     position: "absolute",
@@ -264,11 +260,7 @@ const styles = StyleSheet.create({
   dotRingMilestone: {
     borderColor: Palette.accentSky,
     backgroundColor: "rgba(143, 211, 255, 0.12)",
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.16,
-    shadowRadius: 4,
-    elevation: 2,
+    boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.16)",
   },
   dotPulse: {
     position: "absolute",

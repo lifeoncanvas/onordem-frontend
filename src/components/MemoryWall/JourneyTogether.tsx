@@ -9,7 +9,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { Palette } from "@/constants/theme";
+import { Palette, alphaColor } from "@/constants/theme";
 
 export const JOURNEY_COLORS = {
   panelStart: "#000000",
@@ -66,7 +66,7 @@ export default function JourneyTogether({
         end={{ x: 1, y: 1 }}
         style={StyleSheet.absoluteFill}
       />
-      <View pointerEvents="none" style={styles.glow} />
+      <View style={[styles.glow, { pointerEvents: "none" }]} />
 
       <View style={styles.header}>
         <View style={styles.headerActions}>
@@ -214,11 +214,7 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
     borderRadius: 28,
     overflow: "hidden",
-    shadowColor: JOURNEY_COLORS.panelStart,
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.32,
-    shadowRadius: 18,
-    elevation: 8,
+    boxShadow: `0px 10px 18px ${alphaColor(JOURNEY_COLORS.panelStart, 0.32)}`,
   },
   glow: {
     position: "absolute",
@@ -324,11 +320,7 @@ const styles = StyleSheet.create({
     borderRadius: 19,
     borderColor: "rgba(255, 240, 154, 0.4)",
     backgroundColor: "rgba(255, 240, 154, 0.14)",
-    shadowColor: JOURNEY_COLORS.gold,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.85,
-    shadowRadius: 8,
-    elevation: 5,
+    boxShadow: `0px 0px 8px ${alphaColor(JOURNEY_COLORS.gold, 0.85)}`,
   },
   milestoneNodeCore: {
     width: 14,

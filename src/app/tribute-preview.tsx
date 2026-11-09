@@ -10,6 +10,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
@@ -70,13 +71,13 @@ export default function TributePreviewScreen() {
       Animated.timing(fadeAnim, {
         toValue: 1,
         duration: 600,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== "web",
       }),
       Animated.spring(scaleAnim, {
         toValue: 1,
         tension: 40,
         friction: 7,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== "web",
       }),
     ]).start();
   }, [fadeAnim, scaleAnim]);
@@ -87,13 +88,13 @@ export default function TributePreviewScreen() {
       Animated.timing(toastFade, {
         toValue: 1,
         duration: 200,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== "web",
       }),
       Animated.delay(2600),
       Animated.timing(toastFade, {
         toValue: 0,
         duration: 250,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== "web",
       }),
     ]).start(() => setToastMessage(null));
   };
@@ -440,11 +441,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderWidth: 1,
     borderColor: Palette.borderSubtle,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.05)",
   },
   headerTitleWrap: {
     alignItems: "center",
@@ -481,11 +478,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 9,
     borderRadius: 12,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 3,
+    boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.2)",
   },
   toastText: {
     fontSize: 12,
@@ -511,11 +504,7 @@ const styles = StyleSheet.create({
     padding: 8,
     borderWidth: 1.5,
     borderColor: "rgba(236, 143, 62, 0.35)",
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.16,
-    shadowRadius: 18,
-    elevation: 6,
+    boxShadow: "0px 8px 18px rgba(0, 0, 0, 0.16)",
     position: "relative",
   },
   tapExpandPill: {
@@ -531,11 +520,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     borderWidth: 1,
     borderColor: "rgba(236, 143, 62, 0.3)",
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
   },
   tapExpandText: {
     fontSize: 10.5,
@@ -606,11 +591,7 @@ const styles = StyleSheet.create({
     backgroundColor: Palette.oceanTeal,
     paddingVertical: 14,
     borderRadius: 18,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.28,
-    shadowRadius: 8,
-    elevation: 4,
+    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.28)",
     borderWidth: 1,
     borderColor: "rgba(236, 143, 62, 0.35)",
   },
@@ -638,11 +619,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
     borderColor: Palette.borderSubtle,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.05)",
   },
   secondaryActionBtnText: {
     fontSize: 13,

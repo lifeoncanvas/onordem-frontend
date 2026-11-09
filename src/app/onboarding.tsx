@@ -282,8 +282,7 @@ export default function OnboardingScreen() {
                   <LinearGradient
                     colors={["transparent", "rgba(0,0,0,0.7)", "#000000"]}
                     locations={[0.5, 0.85, 1]}
-                    style={styles.desktopGradientOverlay}
-                    pointerEvents="none"
+                    style={[styles.desktopGradientOverlay, { pointerEvents: "none" }]}
                   />
                 </View>
               </View>
@@ -309,8 +308,7 @@ export default function OnboardingScreen() {
                   "#000000",
                 ]}
                 locations={[0, 0.45, 0.8, 1]}
-                style={styles.bottomCollageGradient}
-                pointerEvents="none"
+                style={[styles.bottomCollageGradient, { pointerEvents: "none" }]}
               />
             </View>
 
@@ -397,11 +395,7 @@ const styles = StyleSheet.create({
     backgroundColor: SystemColors.secondarySystemBackground,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: SystemColors.separator,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.35,
-    shadowRadius: 14,
-    elevation: 6,
+    boxShadow: "0px 8px 14px rgba(0, 0, 0, 0.35)",
   },
   cardImage: {
     width: "100%",

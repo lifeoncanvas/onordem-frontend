@@ -18,7 +18,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
-import { AppFonts, MaxContentWidth, Palette } from "@/constants/theme";
+import { AppFonts, MaxContentWidth, Palette, alphaColor } from "@/constants/theme";
 import { getAllStories, WISDOM_LESSON } from "@/data/mockStories";
 import { memoryService } from "@/services/memoryService";
 import { storyBookmarkService } from "@/services/storyBookmarkService";
@@ -392,7 +392,7 @@ export default function SavedItemsScreen() {
                 ) : (
                   <View style={[styles.card, styles.memoryKeepsakeCard]}>
                     {/* Background Memory Images Grid/Collage */}
-                    <View style={styles.memoryGridBackground} pointerEvents="none">
+                    <View style={[styles.memoryGridBackground, { pointerEvents: "none" }]}>
                       <View style={styles.memoryGridRow}>
                         <Image
                           source={{ uri: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=500&auto=format&fit=crop&q=80" }}
@@ -810,10 +810,7 @@ const styles = StyleSheet.create({
     borderColor: Palette.borderSubtle,
     ...Platform.select({
       ios: {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.08,
-        shadowRadius: 3,
+        boxShadow: "0px 1px 3px rgba(0, 0, 0, 0.08)",
       },
       android: {
         elevation: 2,
@@ -942,11 +939,7 @@ const styles = StyleSheet.create({
     backgroundColor: Palette.accentMint,
     borderWidth: 1,
     borderColor: Palette.accentMint,
-    shadowColor: Palette.accentMint,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
-    elevation: 3,
+    boxShadow: `0px 2px 6px ${alphaColor(Palette.accentMint, 0.25)}`,
   },
   pillIconBadge: {
     width: 28,
@@ -1059,11 +1052,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255, 255, 255, 0.35)",
     overflow: "hidden",
     position: "relative",
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.45,
-    shadowRadius: 8,
-    elevation: 4,
+    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.45)",
   },
   keepsakePhotoImage: {
     width: "100%",
@@ -1174,10 +1163,7 @@ const styles = StyleSheet.create({
     borderColor: Palette.borderSubtle,
     ...Platform.select({
       ios: {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 2,
+        boxShadow: "0px 1px 2px rgba(0, 0, 0, 0.05)",
       },
       android: {
         elevation: 1,

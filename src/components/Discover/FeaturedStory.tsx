@@ -9,6 +9,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { Palette } from "@/constants/theme";
+import { textShadow } from "@/constants/textShadow";
 import { Story } from "@/types/story";
 
 interface FeaturedStoryProps {
@@ -145,11 +146,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderWidth: 1,
     borderColor: Palette.borderSubtle,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.12,
-    shadowRadius: 18,
-    elevation: 5,
+    boxShadow: "0px 8px 18px rgba(0, 0, 0, 0.12)",
   },
   imageWrapper: {
     height: 250,
@@ -180,10 +177,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.15,
-    shadowRadius: 3,
+    boxShadow: "0px 1px 3px rgba(0, 0, 0, 0.15)",
   },
   relationshipText: {
     fontSize: 11,
@@ -212,18 +206,14 @@ const styles = StyleSheet.create({
     color: Palette.pureWhite,
     marginBottom: 6,
     letterSpacing: -0.3,
-    textShadowColor: "rgba(0, 0, 0, 0.45)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 4,
+    ...textShadow(0, 1, 4, "rgba(0, 0, 0, 0.45)"),
   },
   storyExcerpt: {
     fontSize: 13.5,
     color: "rgba(255, 248, 240, 0.95)",
     lineHeight: 19,
     fontStyle: "italic",
-    textShadowColor: "rgba(0, 0, 0, 0.45)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
+    ...textShadow(0, 1, 3, "rgba(0, 0, 0, 0.45)"),
   },
   cardFooter: {
     flexDirection: "row",
@@ -259,11 +249,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 9,
     borderRadius: 20,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
-    elevation: 3,
+    boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.25)",
   },
   readBtnText: {
     fontSize: 12,

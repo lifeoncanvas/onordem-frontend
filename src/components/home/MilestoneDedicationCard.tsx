@@ -97,11 +97,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#141414", // Subtle dark-grey layer
     borderWidth: 1.2,
     borderColor: "rgba(255, 255, 255, 0.12)", // Subtle grey border
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    elevation: 4,
+    boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.4)",
     minHeight: 220,
     justifyContent: "space-between",
   },

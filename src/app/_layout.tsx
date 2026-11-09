@@ -124,9 +124,6 @@ const styles = StyleSheet.create({
     width: "100%",
     marginHorizontal: "auto",
     backgroundColor: SystemColors.systemBackground,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
+    boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.3)",
   },
 });

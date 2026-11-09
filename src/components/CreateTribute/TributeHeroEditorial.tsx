@@ -3,6 +3,7 @@ import { Image, StyleSheet, Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { Palette } from "@/constants/theme";
+import { textShadow } from "@/constants/textShadow";
 
 interface TributeHeroEditorialProps {
   imageUri?: string;
@@ -83,11 +84,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderWidth: 1.5,
     borderColor: "rgba(252, 238, 228, 0.9)",
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.14,
-    shadowRadius: 14,
-    elevation: 4,
+    boxShadow: "0px 6px 14px rgba(0, 0, 0, 0.14)",
     position: "relative",
     height: 220,
   },
@@ -146,8 +143,6 @@ const styles = StyleSheet.create({
     color: Palette.pureWhite,
     letterSpacing: -0.2,
     lineHeight: 22,
-    textShadowColor: "rgba(0, 0, 0, 0.35)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 4,
+    ...textShadow(0, 1, 4, "rgba(0, 0, 0, 0.35)"),
   },
 });

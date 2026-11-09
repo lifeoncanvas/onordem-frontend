@@ -91,11 +91,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     height: 260,
     backgroundColor: Palette.deepTeal,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.28,
-    shadowRadius: 16,
-    elevation: 10,
+    boxShadow: "0px 8px 16px rgba(0, 0, 0, 0.28)",
     position: "relative",
   },
   photo: {

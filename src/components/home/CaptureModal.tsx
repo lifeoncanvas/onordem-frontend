@@ -102,13 +102,13 @@ export default function CaptureModal({ visible, onClose, onSave }: CaptureModalP
       Animated.timing(fadeAnim, {
         toValue: 1,
         duration: 220,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== "web",
       }),
       Animated.spring(slideAnim, {
         toValue: 0,
         tension: 60,
         friction: 10,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== "web",
       }),
     ]).start(() => {
       textRef.current?.focus();
@@ -127,12 +127,12 @@ export default function CaptureModal({ visible, onClose, onSave }: CaptureModalP
       Animated.timing(fadeAnim, {
         toValue: 0,
         duration: 180,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== "web",
       }),
       Animated.timing(slideAnim, {
         toValue: 400,
         duration: 200,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== "web",
       }),
     ]).start(onClose);
   };
@@ -153,7 +153,7 @@ export default function CaptureModal({ visible, onClose, onSave }: CaptureModalP
       toValue: 1,
       tension: 50,
       friction: 7,
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== "web",
     }).start();
 
     setTimeout(() => {
@@ -179,8 +179,7 @@ export default function CaptureModal({ visible, onClose, onSave }: CaptureModalP
 
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
-        style={styles.keyboardAvoid}
-        pointerEvents="box-none"
+        style={[styles.keyboardAvoid, { pointerEvents: "box-none" }]}
       >
         <Animated.View
           style={[
@@ -370,11 +369,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: Platform.OS === "ios" ? 36 : 24,
     maxHeight: "85%",
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    elevation: 8,
+    boxShadow: "0px -4px 12px rgba(0, 0, 0, 0.12)",
   },
   handleBar: {
     width: 36,
@@ -503,11 +498,7 @@ const styles = StyleSheet.create({
     height: 54,
     borderRadius: 28,
     marginBottom: 10,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 6,
-    elevation: 2,
+    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.12)",
   },
   saveBtnText: {
     fontSize: 16,
@@ -536,11 +527,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 16,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 6,
-    elevation: 2,
+    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.12)",
   },
   successTitle: {
     fontSize: 18,

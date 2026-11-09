@@ -127,7 +127,7 @@ export default function TributeDesignScreen() {
     Animated.timing(entranceFade, {
       toValue: 1,
       duration: 500,
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== "web",
     }).start();
   }, [entranceFade]);
 
@@ -137,13 +137,13 @@ export default function TributeDesignScreen() {
       Animated.timing(toastFade, {
         toValue: 1,
         duration: 200,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== "web",
       }),
       Animated.delay(2200),
       Animated.timing(toastFade, {
         toValue: 0,
         duration: 250,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== "web",
       }),
     ]).start(() => setToastMessage(null));
   };
@@ -515,11 +515,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 9,
     borderRadius: 12,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 3,
+    boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.2)",
   },
   toastText: {
     fontSize: 12,
@@ -603,11 +599,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 14,
     borderRadius: 20,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.28,
-    shadowRadius: 10,
-    elevation: 4,
+    boxShadow: "0px 6px 10px rgba(0, 0, 0, 0.28)",
     borderWidth: 1,
     borderColor: "rgba(236, 143, 62, 0.35)",
   },

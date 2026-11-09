@@ -103,13 +103,13 @@ export default function AddMemoryModal({
         Animated.timing(fadeAnim, {
           toValue: 1,
           duration: 200,
-          useNativeDriver: true,
+          useNativeDriver: Platform.OS !== "web",
         }),
         Animated.spring(slideAnim, {
           toValue: 0,
           tension: 62,
           friction: 11,
-          useNativeDriver: true,
+          useNativeDriver: Platform.OS !== "web",
         }),
       ]).start();
     } else {
@@ -142,9 +142,9 @@ export default function AddMemoryModal({
           {
             opacity: fadeAnim,
             transform: [{ translateY: slideAnim }],
+            pointerEvents: "box-none",
           },
         ]}
-        pointerEvents="box-none"
       >
         <TouchableWithoutFeedback>
           <View style={styles.sheet}>
@@ -322,11 +322,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 10,
     paddingBottom: Platform.OS === "ios" ? 44 : 28,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: -6 },
-    shadowOpacity: 0.16,
-    shadowRadius: 18,
-    elevation: 14,
+    boxShadow: "0px -6px 18px rgba(0, 0, 0, 0.16)",
   },
   handle: {
     width: 38,
@@ -434,11 +430,7 @@ const styles = StyleSheet.create({
     width: "47.5%",
     borderRadius: 20,
     padding: 14,
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.07,
-    shadowRadius: 8,
-    elevation: 2,
+    boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.07)",
     borderWidth: 1,
     borderColor: Palette.borderSubtle,
   },
@@ -460,11 +452,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 10,
     paddingVertical: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 3,
-    elevation: 1,
+    boxShadow: "0px 1px 3px rgba(0, 0, 0, 0.08)",
     alignSelf: "flex-start",
   },
   badgeText: {

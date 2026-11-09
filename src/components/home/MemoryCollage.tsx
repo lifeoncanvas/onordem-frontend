@@ -185,8 +185,7 @@ function MemoryTile({ memory, variant, height, liked, onOpen, onToggleLike }: Me
             <LinearGradient
               colors={["rgba(0,0,0,0)", "rgba(0,0,0,0.15)", "rgba(0,0,0,0.82)"]}
               locations={[0, 0.45, 1]}
-              style={StyleSheet.absoluteFill}
-              pointerEvents="none"
+              style={[StyleSheet.absoluteFill, { pointerEvents: "none" }]}
             />
             <View style={[styles.photoText, isHero && styles.heroText]}>
               <Text style={styles.photoEyebrow} numberOfLines={1}>

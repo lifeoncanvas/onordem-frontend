@@ -141,11 +141,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#181818",
     borderWidth: 1.2,
     borderColor: "rgba(255, 255, 255, 0.08)",
-    shadowColor: "#000000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    elevation: 3,
+    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.25)",
   },
   cardSurface: {
     padding: 16,

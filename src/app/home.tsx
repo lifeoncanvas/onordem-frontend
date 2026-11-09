@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   View,
   useWindowDimensions,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
@@ -44,7 +45,7 @@ import { userProfileService } from "@/services/userProfileService";
 import type { UserProfile } from "@/services/userProfileService";
 import { getAuthToken } from "@/services/api";
 import type { WallItem, WallMemory } from "@/types/memoryWall";
-import { useResponsive } from "@/hooks/useResponsive";
+import { useIsBrowser } from "@/hooks/useIsBrowser";
 import { useQrModal } from "@/context/QrModalContext";
 
 // Mock Data: Mentors
@@ -223,7 +224,7 @@ function MemoryFilterPill({
       toValue: isActive ? 1.04 : 1,
       speed: 24,
       bounciness: 5,
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== "web",
     }).start();
   }, [isActive, scale]);
 
@@ -490,7 +491,7 @@ export default function HomeScreen() {
   const [profile, setProfile] = useState<UserProfile>(() => userProfileService.getProfile());
   const [homeSearch, setHomeSearch] = useState("");
   const { width: windowWidth } = useWindowDimensions();
-  const { isWeb } = useResponsive();
+  const isBrowser = useIsBrowser();
   const { openQrModal } = useQrModal();
   const [reflectionInput, setReflectionInput] = useState("");
   const [hasSubmittedReflection, setHasSubmittedReflection] = useState(false);
@@ -554,7 +555,7 @@ export default function HomeScreen() {
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 650,
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== "web",
     }).start();
   }, [fadeAnim]);
 
@@ -798,8 +799,8 @@ export default function HomeScreen() {
             </ScrollView>
           </View>
 
-          {/* Open the app install popup from this compact home banner. */}
-          {isWeb && (
+          {/* Open the app install popup from this compact home banner (browser only, never inside the installed app). */}
+          {isBrowser && (
             <View
               style={[
                 styles.webQrPrompt,
