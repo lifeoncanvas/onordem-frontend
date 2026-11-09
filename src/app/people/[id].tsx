@@ -2,14 +2,15 @@
  * Another person's public profile: who they are, their counts, a Follow button,
  * and the tributes they've shared publicly.
  */
-import React from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
+import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { AppFonts, Layout, Palette, SystemColors, TextStyles } from "@/constants/theme";
 import { followService } from "@/services/followService";
+import { api } from "@/services/api";
 import FollowButton, { useIsFollowing } from "@/components/FollowButton";
 import MemoryCollage from "@/components/home/MemoryCollage";
 
@@ -30,8 +31,36 @@ export default function PersonProfileScreen() {
   // (the React Compiler would otherwise cache a plain service call).
   const isFollowing = useIsFollowing(personId);
 
+  const [isAppreciating, setIsAppreciating] = useState(false);
+  const [hasAppreciated, setHasAppreciated] = useState(false);
+  const [appreciationNotice, setAppreciationNotice] = useState<string | null>(null);
+
   const person = followService.getPerson(personId);
   const tributes = person ? followService.getPersonTributes(person.id) : [];
+
+  const handleAppreciate = async () => {
+    if (!person || isAppreciating) return;
+    setIsAppreciating(true);
+    setAppreciationNotice(null);
+
+    try {
+      const res = await api.users.appreciate(person.id);
+      setHasAppreciated(true);
+      setAppreciationNotice(
+        res?.message || `You appreciated ${person.name}! An official email notification was sent to them.`
+      );
+    } catch (err: any) {
+      const msg = err?.message || "";
+      if (msg.toLowerCase().includes("already appreciated")) {
+        setHasAppreciated(true);
+        setAppreciationNotice(msg);
+      } else {
+        Alert.alert("Appreciation", msg || "Failed to send appreciation. Please try again.");
+      }
+    } finally {
+      setIsAppreciating(false);
+    }
+  };
 
   const goBack = () => (router.canGoBack() ? router.back() : router.replace("/home"));
 
@@ -105,7 +134,52 @@ export default function PersonProfileScreen() {
           <Text style={styles.role}>{person.role}</Text>
           {person.bio ? <Text style={styles.bio}>{person.bio}</Text> : null}
 
-          <FollowButton person={person} block style={styles.followButton} />
+          {/* Action Buttons: Follow & Appreciate */}
+          <View style={styles.actionsRow}>
+            <View style={styles.followButtonWrap}>
+              <FollowButton person={person} block style={styles.followButton} />
+            </View>
+            <Pressable
+              onPress={handleAppreciate}
+              disabled={isAppreciating}
+              style={({ pressed }) => [
+                styles.appreciateButton,
+                hasAppreciated && styles.appreciateButtonActive,
+                pressed && { opacity: 0.8 },
+                isAppreciating && { opacity: 0.6 },
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel={`Appreciate ${person.name}`}
+            >
+              {isAppreciating ? (
+                <ActivityIndicator size="small" color={SystemColors.label} />
+              ) : (
+                <>
+                  <Ionicons
+                    name={hasAppreciated ? "heart" : "heart-outline"}
+                    size={18}
+                    color={hasAppreciated ? "#FF3B30" : SystemColors.label}
+                  />
+                  <Text
+                    style={[
+                      styles.appreciateButtonText,
+                      hasAppreciated && styles.appreciateButtonTextActive,
+                    ]}
+                  >
+                    {hasAppreciated ? "Appreciated" : "Appreciate"}
+                  </Text>
+                </>
+              )}
+            </Pressable>
+          </View>
+
+          {/* Feedback banner for appreciation email */}
+          {appreciationNotice && (
+            <View style={styles.appreciationBanner}>
+              <Ionicons name="sparkles" size={16} color="#EC8F3E" />
+              <Text style={styles.appreciationNoticeText}>{appreciationNotice}</Text>
+            </View>
+          )}
 
           {/* Tributes */}
           <Text style={styles.sectionTitle} accessibilityRole="header">
@@ -177,7 +251,58 @@ const styles = StyleSheet.create({
   name: { ...TextStyles.title2, fontFamily: AppFonts.displaySans, color: SystemColors.label, marginTop: 16 },
   role: { ...TextStyles.subheadline, fontFamily: AppFonts.body, color: Palette.textMuted, marginTop: 2 },
   bio: { ...TextStyles.body, fontFamily: AppFonts.body, color: SystemColors.label, marginTop: 10 },
-  followButton: { marginTop: 16, minHeight: 44 },
+  actionsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    marginTop: 16,
+  },
+  followButtonWrap: { flex: 1 },
+  followButton: { minHeight: 44 },
+  appreciateButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    minHeight: 44,
+    paddingHorizontal: 18,
+    borderRadius: Layout.radiusMedium,
+    backgroundColor: SystemColors.secondarySystemBackground,
+    borderWidth: 1,
+    borderColor: SystemColors.separator,
+  },
+  appreciateButtonActive: {
+    borderColor: "rgba(255, 59, 48, 0.4)",
+    backgroundColor: "rgba(255, 59, 48, 0.12)",
+  },
+  appreciateButtonText: {
+    ...TextStyles.subheadline,
+    fontFamily: AppFonts.body,
+    fontWeight: "600",
+    color: SystemColors.label,
+  },
+  appreciateButtonTextActive: {
+    color: "#FF3B30",
+  },
+  appreciationBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: "rgba(236, 143, 62, 0.15)",
+    borderWidth: 1,
+    borderColor: "rgba(236, 143, 62, 0.3)",
+    borderRadius: Layout.radiusSmall,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    marginTop: 12,
+  },
+  appreciationNoticeText: {
+    ...TextStyles.footnote,
+    fontFamily: AppFonts.body,
+    color: SystemColors.label,
+    flex: 1,
+    lineHeight: 18,
+  },
 
   sectionTitle: {
     ...TextStyles.title3,

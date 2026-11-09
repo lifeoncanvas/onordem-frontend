@@ -94,10 +94,16 @@ export const api = {
   auth: {
     register: (data: { name: string; email: string; password: string; username?: string; phone?: string }) =>
       apiRequest("/auth/register", { method: "POST", body: JSON.stringify(data) }),
+    verifyRegistrationOtp: (email: string, code: string) =>
+      apiRequest("/auth/verify-registration-otp", { method: "POST", body: JSON.stringify({ email, code }) }),
+    resendRegistrationOtp: (email: string) =>
+      apiRequest("/auth/resend-registration-otp", { method: "POST", body: JSON.stringify({ email }) }),
     login: (data: { emailOrUsername: string; password: string }) =>
       apiRequest("/auth/login", { method: "POST", body: JSON.stringify(data) }),
     me: () => apiRequest("/auth/me"),
     forgotPassword: (email: string) =>
+      apiRequest("/auth/forgot-password", { method: "POST", body: JSON.stringify({ email }) }),
+    resendForgotPassword: (email: string) =>
       apiRequest("/auth/forgot-password", { method: "POST", body: JSON.stringify({ email }) }),
     verifyOtp: (email: string, code: string) =>
       apiRequest("/auth/verify-otp", { method: "POST", body: JSON.stringify({ email, code }) }),
@@ -125,6 +131,8 @@ export const api = {
       setupComplete?: boolean;
     }) =>
       apiRequest("/users/me", { method: "PUT", body: JSON.stringify(data) }),
+    appreciate: (userId: string) =>
+      apiRequest(`/users/${userId}/appreciate`, { method: "POST" }),
   },
 
   // Mentors

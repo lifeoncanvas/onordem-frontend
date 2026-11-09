@@ -61,8 +61,8 @@ export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState("");
   const [isEmailFocused, setIsEmailFocused] = useState(false);
 
-  // Step 2: 5-Digit OTP Code State
-  const [otp, setOtp] = useState(["", "", "", "", ""]);
+  // Step 2: 6-Digit OTP Code State
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [focusedOtpIndex, setFocusedOtpIndex] = useState<number | null>(null);
   const otpRefs = useRef<(TextInput | null)[]>([]);
   const [resendTimer, setResendTimer] = useState(45);
@@ -149,17 +149,17 @@ export default function ForgotPasswordScreen() {
 
     if (cleaned.length > 1) {
       // Handle paste
-      const pastedDigits = cleaned.slice(0, 5).split("");
+      const pastedDigits = cleaned.slice(0, 6).split("");
       pastedDigits.forEach((digit, i) => {
-        if (i < 5) updated[i] = digit;
+        if (i < 6) updated[i] = digit;
       });
       setOtp(updated);
-      const nextIndex = Math.min(pastedDigits.length, 4);
+      const nextIndex = Math.min(pastedDigits.length, 5);
       otpRefs.current[nextIndex]?.focus();
     } else {
       updated[index] = cleaned;
       setOtp(updated);
-      if (cleaned && index < 4) {
+      if (cleaned && index < 5) {
         otpRefs.current[index + 1]?.focus();
       }
     }
@@ -182,7 +182,7 @@ export default function ForgotPasswordScreen() {
       await requestPasswordReset(email.trim());
       setResendTimer(45);
       setIsTimerActive(true);
-      setOtp(["", "", "", "", ""]);
+      setOtp(["", "", "", "", "", ""]);
       otpRefs.current[0]?.focus();
     } catch (err: any) {
       setErrorMessage(err?.message || "Failed to resend code.");
@@ -194,8 +194,8 @@ export default function ForgotPasswordScreen() {
   // Verify OTP Code
   const handleVerifyOtp = async () => {
     const code = otp.join("");
-    if (code.length < 5) {
-      setErrorMessage("Please enter the complete 5-digit verification code.");
+    if (code.length < 6) {
+      setErrorMessage("Please enter the complete 6-digit verification code.");
       return;
     }
 
@@ -385,7 +385,7 @@ export default function ForgotPasswordScreen() {
             )}
 
             {/* ============================================================= */}
-            {/* STEP 2: CHECK YOUR EMAIL (5-DIGIT OTP VERIFICATION) */}
+            {/* STEP 2: CHECK YOUR EMAIL (6-DIGIT OTP VERIFICATION) */}
             {/* ============================================================= */}
             {step === "OTP" && (
               <View style={styles.stepWrapper}>
@@ -396,8 +396,8 @@ export default function ForgotPasswordScreen() {
 
                   <Text style={styles.title}>Check your email</Text>
                   <Text style={styles.subtitle}>
-                    We sent a reset link to <Text style={styles.highlightText}>{email.trim()}</Text>
-                    {"\n"}enter 5 digit code that mentioned in the email
+                    We sent a reset code to <Text style={styles.highlightText}>{email.trim()}</Text>
+                    {"\n"}Enter the 6-digit code mentioned in the email
                   </Text>
                 </View>
 
@@ -414,7 +414,7 @@ export default function ForgotPasswordScreen() {
                 )}
 
                 <View style={styles.cardContainer}>
-                  {/* 5 Digit Input Boxes */}
+                  {/* 6 Digit Input Boxes */}
                   <View style={styles.otpRow}>
                     {otp.map((digit, index) => (
                       <TextInput
@@ -430,7 +430,7 @@ export default function ForgotPasswordScreen() {
                         onFocus={() => setFocusedOtpIndex(index)}
                         onBlur={() => setFocusedOtpIndex(null)}
                         keyboardType="number-pad"
-                        maxLength={index === 0 ? 5 : 1}
+                        maxLength={index === 0 ? 6 : 1}
                         selectTextOnFocus
                         selectionColor={THEME.primary}
                         style={[
@@ -446,7 +446,7 @@ export default function ForgotPasswordScreen() {
                   <View style={{ flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: "#1C1C1E", borderRadius: 10, padding: 10, marginBottom: 16 }}>
                     <Ionicons name="information-circle-outline" size={16} color={Palette.accentSky} />
                     <Text style={{ color: "#A1A1AA", fontSize: 12, flex: 1, lineHeight: 16 }}>
-                      Code sent from info@onodem.com. It expires in 15 minutes. Can&apos;t find it? Check your spam folder or resend the code.
+                      Code sent from info@onodem.com. It expires in 10 minutes. Can&apos;t find it? Check your spam folder or resend the code.
                     </Text>
                   </View>
 
@@ -913,22 +913,23 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 
-  /* 5-Digit OTP Boxes */
+  /* 6-Digit OTP Boxes */
   otpRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
     marginBottom: 24,
+    gap: 8,
   },
   otpBox: {
-    width: 52,
-    height: 58,
-    borderRadius: 16,
+    flex: 1,
+    height: 56,
+    borderRadius: 14,
     borderWidth: 1.5,
     borderColor: THEME.border,
     backgroundColor: THEME.card,
     textAlign: "center",
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: "800",
     color: THEME.heading,
   },
