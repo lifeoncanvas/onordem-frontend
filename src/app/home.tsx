@@ -48,150 +48,10 @@ import type { WallItem, WallMemory } from "@/types/memoryWall";
 import { useIsBrowser } from "@/hooks/useIsBrowser";
 import { useQrModal } from "@/context/QrModalContext";
 
-// Mock Data: Mentors
-const MENTORS_DATA: MentorData[] = [
-  {
-    id: "m1",
-    name: "Mrs. Anita Sharma",
-    role: "Literature Teacher",
-    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600&auto=format&fit=crop&q=80",
-    quote: "Believe in your voice before asking the world to listen.",
-    memoriesCount: 14,
-    yearsKnown: "3 years together",
-    isBookmarked: true,
-    trait: "Patient guide",
-    traitIcon: "flask-outline",
-    lessonCarried: "She stayed after class until fractions finally clicked.",
-    coverColor: Palette.accentSky,
-  },
-  {
-    id: "m2",
-    name: "Dr. David Mitchell",
-    role: "Research Advisor",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&auto=format&fit=crop&q=80",
-    quote: "True mastery is quiet patience with difficult problems.",
-    memoriesCount: 9,
-    yearsKnown: "2 years together",
-    isBookmarked: false,
-    trait: "Honest compass",
-    traitIcon: "compass-outline",
-    lessonCarried: "Critique is an invitation to who you can become tomorrow.",
-    coverColor: Palette.accentLavender,
-  },
-  {
-    id: "m3",
-    name: "Vikram Rao",
-    role: "Engineering Director",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&auto=format&fit=crop&q=80",
-    quote: "Build things that outlive your tenure and elevate people.",
-    memoriesCount: 18,
-    yearsKnown: "6 years together",
-    isBookmarked: true,
-    trait: "Master craftsman",
-    traitIcon: "construct-outline",
-    lessonCarried: "Build things that outlive your tenure and elevate people around you.",
-    coverColor: Palette.accentMint,
-  },
-  {
-    id: "m4",
-    name: "Elena Rostova",
-    role: "Art & Design Coach",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80",
-    quote: "Do not fear the blank page; it is waiting for your courage.",
-    memoriesCount: 11,
-    yearsKnown: "5 years together",
-    isBookmarked: false,
-    trait: "Creative clarity",
-    traitIcon: "sparkles-outline",
-    lessonCarried: "Forgive yourself for the first five ugly drafts to find the single true stroke.",
-    coverColor: Palette.accentPink,
-  },
-  {
-    id: "m5",
-    name: "Priya Nair",
-    role: "Design Lead",
-    avatar: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&auto=format&fit=crop&q=80",
-    quote: "Trust your taste and ship the idea anyway.",
-    memoriesCount: 7,
-    yearsKnown: "4 years together",
-    isBookmarked: false,
-    trait: "Creative visionary",
-    traitIcon: "color-palette-outline",
-    lessonCarried: "She told me to trust my taste and ship the idea anyway.",
-    coverColor: Palette.accentCoral,
-  },
-];
-
-// Mock Data: Memory Wall
-const MEMORIES_DATA: MemoryData[] = [
-  {
-    id: "mem1",
-    type: "photo",
-    title: "First Day at College",
-    mentorName: "Mrs. Anita Sharma",
-    date: "Sep 2018",
-    content: "You handed me your own annotated anthology of poems and said, 'You belong in every room you enter.'",
-    image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&auto=format&fit=crop&q=80",
-    likes: 42,
-    tags: ["college", "guidance"],
-  },
-  {
-    id: "mem2",
-    type: "gratitude",
-    title: "The Lesson in Failure",
-    mentorName: "Dr. David Mitchell",
-    date: "Nov 2021",
-    content: "When our first grant proposal was rejected, you bought coffee and spent three hours explaining why resilience is the actual degree.",
-    likes: 67,
-  },
-  {
-    id: "mem3",
-    type: "voice",
-    title: "Voice Memo Before Defense",
-    mentorName: "Vikram Rao",
-    date: "May 2023",
-    content: "A 45-second voicemail recorded in the cab on the way to the thesis board. Still keeps me grounded.",
-    audioDuration: "0:45",
-    likes: 29,
-  },
-  {
-    id: "mem4",
-    type: "lesson",
-    title: "The Discipline of Craft",
-    mentorName: "Elena Rostova",
-    date: "Feb 2024",
-    content: "Critique is not an attack on who you are; it is an invitation to who you can become tomorrow.",
-    likes: 88,
-  },
-];
-
-// Mock Data: Voice Notes
-const VOICE_NOTES: VoiceNoteData[] = [
-  {
-    id: "vn1",
-    title: "Advice for my first startup pitch",
-    mentorName: "Vikram Rao",
-    duration: "1:24",
-    date: "12 Oct 2023",
-    category: "Career Guidance",
-  },
-  {
-    id: "vn2",
-    title: "When you feel like giving up on writing",
-    mentorName: "Mrs. Anita Sharma",
-    duration: "2:08",
-    date: "04 Jan 2024",
-    category: "Creative Courage",
-  },
-  {
-    id: "vn3",
-    title: "Lab notes on staying curious",
-    mentorName: "Dr. David Mitchell",
-    duration: "0:56",
-    date: "19 Mar 2024",
-    category: "Philosophy",
-  },
-];
+// Mentors & Feed Data (Populated dynamically from user data & backend)
+const MENTORS_DATA: MentorData[] = [];
+const MEMORIES_DATA: MemoryData[] = [];
+const VOICE_NOTES: VoiceNoteData[] = [];
 
 const MEMORY_WALL_FILTERS = [
   { id: "all", label: "All Memories", icon: "sparkles-outline", color: Palette.accentSky },
@@ -515,7 +375,25 @@ export default function HomeScreen() {
   );
 
   React.useEffect(
-    () => memoryService.subscribe(() => setWallItems(memoryService.getAllMemories())),
+    () =>
+      memoryService.subscribe(() => {
+        setWallItems(memoryService.getAllMemories());
+        const realMentors = memoryService.getAllMentorProfiles().map((m) => ({
+          id: m.id,
+          name: m.name,
+          role: m.relationship || "Mentor",
+          avatar: m.avatarUri || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600&auto=format&fit=crop&q=80",
+          quote: m.meaningfulQuote || m.description || "",
+          memoriesCount: m.itemCount || 0,
+          yearsKnown: m.duration || "Honoured",
+          isBookmarked: false,
+          trait: m.trait || "Guide",
+          traitIcon: (m.traitIcon || "heart-outline") as any,
+          lessonCarried: m.meaningfulQuote || "",
+          coverColor: m.coverColor || Palette.accentSky,
+        }));
+        setMentorsList(realMentors);
+      }),
     []
   );
 
@@ -868,7 +746,7 @@ export default function HomeScreen() {
                   <Ionicons
                     name="chevron-forward"
                     size={16}
-                    color={Palette.textOnPrimary}
+                    color="#FFFFFF"
                   />
                 </TouchableOpacity>
               </View>
@@ -1348,12 +1226,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     marginTop: 14,
     borderRadius: Layout.minTouch / 2,
-    backgroundColor: "#FFFFFF", // on a photo: stays white in both appearances
+    backgroundColor: "rgba(255, 255, 255, 0.22)",
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.35)",
   },
   watchStoryText: {
     ...TextStyles.subheadline,
     fontWeight: "600",
-    color: "#000000",
+    color: "#FFFFFF",
   },
   mentorSectionHeader: {
     flexDirection: "row",

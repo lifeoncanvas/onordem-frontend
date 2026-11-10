@@ -101,6 +101,7 @@ export default function TributePreviewScreen() {
 
   // Primary Action: Save Keepsake
   const handleSaveKeepsake = async () => {
+    if (isSaving || isSaved) return;
     setIsSaving(true);
     try {
       await tributeDraftService.saveCompletedTribute(design);
@@ -140,10 +141,13 @@ export default function TributePreviewScreen() {
 
   // Next Step: Add to Memory Wall
   const handleAddToMemoryWall = async () => {
+    if (isSaving) return;
     setIsSaving(true);
     try {
-      await tributeDraftService.saveCompletedTribute(design);
-      setIsSaved(true);
+      if (!isSaved) {
+        await tributeDraftService.saveCompletedTribute(design);
+        setIsSaved(true);
+      }
       showToast("Added to Memory Wall!");
       Alert.alert(
         "Memory Wall",

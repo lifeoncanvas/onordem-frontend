@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router, usePathname } from "expo-router";
 import { useResponsive } from "@/hooks/useResponsive";
@@ -166,8 +166,14 @@ export default function ResponsiveHeader({ onOpenQrModal }: ResponsiveHeaderProp
                 onPress={async () => {
                   try {
                     await signOut();
+                  } catch (err) {
+                    console.warn("Sign out error:", err);
                   } finally {
-                    router.replace("/login");
+                    if (Platform.OS === "web" && typeof window !== "undefined") {
+                      window.location.href = "/login";
+                    } else {
+                      router.replace("/login");
+                    }
                   }
                 }}
                 activeOpacity={0.8}

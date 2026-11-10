@@ -29,6 +29,11 @@ function isTributeRelationship(value: string): value is TributeRelationship {
   ].includes(value);
 }
 
+function getItemContent(item: any): string {
+  if (!item) return "";
+  return String(item.quote || item.story || item.excerpt || item.title || item.lessonTitle || item.letterBody || "").trim();
+}
+
 function isStringMap(value: unknown): value is Record<string, string> {
   return (
     !!value &&
@@ -85,8 +90,8 @@ function isPinOverrideMap(value: unknown): value is Record<string, boolean> {
 }
 
 class MemoryService {
-  private items: WallItem[] = [...WALL_ITEMS];
-  private mentors: WallMentorProfile[] = [...WALL_MENTOR_PROFILES];
+  private items: WallItem[] = [];
+  private mentors: WallMentorProfile[] = [];
   private userItemIds = new Set<string>();
   private pinOverrides = new Map<string, boolean>();
   /** Local item id → backend tribute id, for items created on this device. */
@@ -173,10 +178,20 @@ class MemoryService {
       // 1. Fetch public feed tributes from Neon PostgreSQL
       const feedRes = await api.tributes.publicFeed(0, 50);
       if (feedRes?.data?.content && Array.isArray(feedRes.data.content)) {
-        const mine = new Set(this.serverIds.values());
         for (const dto of feedRes.data.content) {
-          const exists = this.items.some((i) => i.id === dto.id) || mine.has(dto.id);
-          if (!exists) this.items.unshift(dtoToWallItem(dto));
+          const dtoText = getItemContent(dto);
+          const existingIndex = this.items.findIndex(
+            (i) =>
+              i.id === dto.id ||
+              (i.mentorName?.trim().toLowerCase() === dto.mentorName?.trim().toLowerCase() &&
+               getItemContent(i) === dtoText)
+          );
+          if (existingIndex >= 0) {
+            this.serverIds.set(this.items[existingIndex].id, dto.id);
+            this.items[existingIndex] = dtoToWallItem(dto);
+          } else {
+            this.items.unshift(dtoToWallItem(dto));
+          }
         }
       }
 
@@ -256,11 +271,18 @@ class MemoryService {
         this.mentors.push(matchingMentor);
       }
 
-      const existingIndex = this.items.findIndex((item) => item.id === keepsake.id);
-      const existing = this.items[existingIndex];
+      const keepsakeText = getItemContent(keepsake);
+      const existingIndex = this.items.findIndex(
+        (item) =>
+          item.id === keepsake.id ||
+          (this.serverIds.has(keepsake.id) && item.id === this.serverIds.get(keepsake.id)) ||
+          (item.mentorName?.trim().toLowerCase() === keepsake.mentorName?.trim().toLowerCase() &&
+           getItemContent(item) === keepsakeText)
+      );
+      const existing = existingIndex >= 0 ? this.items[existingIndex] : undefined;
       const tribute: WallTribute = {
         kind: "tribute",
-        id: keepsake.id,
+        id: existing?.id || keepsake.id,
         mentorId: matchingMentor?.id,
         mentorName: keepsake.mentorName,
         relationship: keepsake.relationship,
@@ -302,7 +324,21 @@ class MemoryService {
 
   public getAllMemories(): WallItem[] {
     this.syncKeepsakes();
-    return [...this.items];
+    // Return unique items only (deduplicate by id and by mentorName + content)
+    const seen = new Set<string>();
+    const unique: WallItem[] = [];
+    for (const item of this.items) {
+      if (!item) continue;
+      const text = getItemContent(item);
+      const contentKey = `${item.mentorName?.trim().toLowerCase()}::${text.slice(0, 40)}`;
+      if (seen.has(item.id) || (contentKey.length > 5 && seen.has(contentKey))) {
+        continue;
+      }
+      seen.add(item.id);
+      if (contentKey.length > 5) seen.add(contentKey);
+      unique.push(item);
+    }
+    return unique;
   }
 
   public getUserCreatedItems(): WallItem[] {
@@ -713,9 +749,23 @@ class MemoryService {
   }
 
   private loadUserItems(userItems: WallItem[]): void {
-    this.userItemIds = new Set(userItems.map((item) => item.id));
-    for (const item of userItems) {
-      const index = this.items.findIndex((saved) => saved.id === item.id);
+    const DUMMY_IDS = new Set(["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10", "mem1", "mem2", "mem3", "mem4", "mp1", "mp2", "mp3", "mp4", "mp5"]);
+    const cleaned = userItems.filter(
+      (item) =>
+        !DUMMY_IDS.has(item.id) &&
+        !(item.mentorName === "Mrs. Anita Sharma" && item.id.startsWith("t")) &&
+        !(item.mentorName === "Dr. David Mitchell" && item.id.startsWith("t")) &&
+        !(item.mentorName === "Vikram Rao" && item.id.startsWith("t"))
+    );
+    this.userItemIds = new Set(cleaned.map((item) => item.id));
+    for (const item of cleaned) {
+      const itemText = getItemContent(item);
+      const index = this.items.findIndex(
+        (saved) =>
+          saved.id === item.id ||
+          (saved.mentorName?.trim().toLowerCase() === item.mentorName?.trim().toLowerCase() &&
+           getItemContent(saved) === itemText)
+      );
       if (index >= 0) this.items[index] = item;
       else this.items.unshift(item);
     }

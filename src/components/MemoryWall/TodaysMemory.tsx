@@ -1,34 +1,7 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Fonts, Palette } from "@/constants/theme";
-
-interface MemoryQuote {
-  quote: string;
-  author: string;
-}
-
-const FEATURED_MEMORIES: MemoryQuote[] = [
-  {
-    quote: "“She stayed after class until fractions finally clicked.”",
-    author: "Mrs. Anita Sharma",
-  },
-  {
-    quote: "“He taught me to ask better questions, not quicker answers.”",
-    author: "Dr. David Mitchell",
-  },
-  {
-    quote: "“His toughest code review made me a far better engineer.”",
-    author: "Vikram Rao",
-  },
-  {
-    quote: "“She told me to trust my taste and ship the idea anyway.”",
-    author: "Priya Nair",
-  },
-  {
-    quote: "“Creativity begins only when you forgive yourself for the first five ugly drafts.”",
-    author: "Elena Rostova",
-  },
-];
+import { memoryService } from "@/services/memoryService";
 
 interface TodaysMemoryProps {
   onAnotherMemoryPress?: () => void;
@@ -37,12 +10,26 @@ interface TodaysMemoryProps {
 export default function TodaysMemory({ onAnotherMemoryPress }: TodaysMemoryProps) {
   const [index, setIndex] = useState(0);
 
+  const realMemories = useMemo(() => {
+    return memoryService
+      .getAllMemories()
+      .filter((m) => m.quote && m.mentorName)
+      .map((m) => ({
+        quote: m.quote?.startsWith("“") || m.quote?.startsWith('"') ? m.quote : `“${m.quote}”`,
+        author: m.mentorName,
+      }));
+  }, []);
+
+  if (realMemories.length === 0) {
+    return null;
+  }
+
   const handleNext = () => {
-    setIndex((prev) => (prev + 1) % FEATURED_MEMORIES.length);
+    setIndex((prev) => (prev + 1) % realMemories.length);
     onAnotherMemoryPress?.();
   };
 
-  const current = FEATURED_MEMORIES[index];
+  const current = realMemories[index % realMemories.length];
 
   return (
     <View style={styles.container}>
@@ -51,14 +38,16 @@ export default function TodaysMemory({ onAnotherMemoryPress }: TodaysMemoryProps
 
       <View style={styles.footerRow}>
         <Text style={styles.authorText}>{current.author}</Text>
-        <TouchableOpacity
-          onPress={handleNext}
-          activeOpacity={0.7}
-          accessibilityRole="button"
-          accessibilityLabel="Cycle to another memory"
-        >
-          <Text style={styles.anotherLink}>Another memory</Text>
-        </TouchableOpacity>
+        {realMemories.length > 1 && (
+          <TouchableOpacity
+            onPress={handleNext}
+            activeOpacity={0.7}
+            accessibilityRole="button"
+            accessibilityLabel="Cycle to another memory"
+          >
+            <Text style={styles.anotherLink}>Another memory</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* Inset Divider Line */}

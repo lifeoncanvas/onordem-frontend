@@ -68,6 +68,9 @@ export default function CreateTributeScreen() {
   const [mentorName, setMentorName] = useState(
     savedDraft?.payload.mentorName || params.mentorName || ""
   );
+  const [recipientEmail, setRecipientEmail] = useState(
+    savedDraft?.payload.recipientEmail || ""
+  );
   const [relationship, setRelationship] = useState<TributeRelationship>(
     toTributeRelationship(savedDraft?.payload.relationship || params.relationship)
   );
@@ -187,13 +190,14 @@ export default function CreateTributeScreen() {
   const buildPayload = React.useCallback((): TributePayload => ({
     id: tributeId,
     mentorName: mentorName.trim(),
+    recipientEmail: recipientEmail.trim() || undefined,
     relationship,
     photoUri: photoUri || DEFAULT_SAMPLE_PORTRAIT,
     isCustomPhoto,
     story: story.trim(),
     inspirationPrompt: activePromptText || undefined,
     createdAt: createdAtRef.current,
-  }), [tributeId, mentorName, relationship, photoUri, isCustomPhoto, story, activePromptText]);
+  }), [tributeId, mentorName, recipientEmail, relationship, photoUri, isCustomPhoto, story, activePromptText]);
 
   React.useEffect(() => {
     if (!isHydrated) return;
@@ -283,6 +287,7 @@ export default function CreateTributeScreen() {
       params: {
         id: payload.id,
         name: payload.mentorName,
+        recipientEmail: payload.recipientEmail,
         relationship: payload.relationship,
         photoUri: payload.photoUri || undefined,
         story: payload.story,
@@ -381,6 +386,24 @@ export default function CreateTributeScreen() {
                 returnKeyType="next"
                 maxLength={60}
                 accessibilityLabel="Their name"
+              />
+
+              <Text style={styles.sectionTitle} accessibilityRole="header">
+                Their email (optional)
+              </Text>
+              <Text style={styles.sectionHint}>
+                We will send an official appreciation notification to this address from info@onodem.com.
+              </Text>
+              <TextInput
+                value={recipientEmail}
+                onChangeText={setRecipientEmail}
+                placeholder="name@example.com"
+                placeholderTextColor={SystemColors.placeholderText}
+                style={styles.field}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+                accessibilityLabel="Their email"
               />
               <ScrollView
                 horizontal

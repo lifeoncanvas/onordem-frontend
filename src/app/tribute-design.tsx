@@ -50,6 +50,7 @@ export default function TributeDesignScreen() {
   const params = useLocalSearchParams<{
     id?: string;
     name?: string;
+    recipientEmail?: string;
     relationship?: string;
     story?: string;
     photoUri?: string;
@@ -154,6 +155,7 @@ export default function TributeDesignScreen() {
     () => ({
       id: tributeId,
       mentorName,
+      recipientEmail: (params.recipientEmail as string) || existingDesign?.recipientEmail || existingPayload?.recipientEmail,
       relationship,
       photoUri,
       isCustomPhoto,

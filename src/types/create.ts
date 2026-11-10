@@ -89,6 +89,7 @@ export interface InspirationCardItem {
 export interface TributePayload {
   id: string;
   mentorName: string;
+  recipientEmail?: string;
   relationship: TributeRelationship;
   photoUri: string | null;
   isCustomPhoto: boolean;
@@ -136,6 +137,7 @@ export type TributeDecorationId =
 export interface TributeDesignState {
   id: string;
   mentorName: string;
+  recipientEmail?: string;
   relationship: TributeRelationship;
   photoUri: string;
   isCustomPhoto: boolean;

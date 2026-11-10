@@ -12,6 +12,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
+  Modal,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
@@ -19,6 +20,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { Palette, SystemColors, TextStyles, Layout } from "@/constants/theme";
 import { api, setAuthToken } from "@/services/api";
 import { userProfileService } from "@/services/userProfileService";
+import { GoogleLogo } from "@/components/SocialLogos";
+import { signInWithGoogle } from "@/services/auth";
 
 type Step = "FORM" | "OTP";
 
@@ -30,8 +33,43 @@ export default function Register() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [resendNotice, setResendNotice] = useState<string | null>(null);
+  const [showGoogleModal, setShowGoogleModal] = useState(false);
+  const [customGoogleEmail, setCustomGoogleEmail] = useState("");
+
+  const handleGoogleSignUp = async (chosenEmail?: string) => {
+    let cleanEmail = (chosenEmail || customGoogleEmail || email || "info@onodem.com").trim().toLowerCase();
+    if (!cleanEmail.includes("@")) {
+      cleanEmail = `${cleanEmail}@gmail.com`;
+    }
+
+    setGoogleLoading(true);
+    setErrorMessage(null);
+    setShowGoogleModal(false);
+
+    try {
+      const derivedName =
+        name.trim() ||
+        (cleanEmail === "info@onodem.com"
+          ? "Onodem Official"
+          : cleanEmail.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()));
+
+      const res = await signInWithGoogle({
+        email: cleanEmail,
+        name: derivedName,
+      });
+
+      if (res?.data?.accessToken) {
+        router.replace("/profile-setup");
+      }
+    } catch (err: any) {
+      setErrorMessage(err?.message || "Google sign up failed. Please try again.");
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
 
   // 6-digit OTP verification state
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -498,7 +536,7 @@ export default function Register() {
                 style={[styles.button, loading && { opacity: 0.7 }]}
                 onPress={handleRegister}
                 activeOpacity={0.7}
-                disabled={loading}
+                disabled={loading || googleLoading}
                 accessibilityRole="button"
                 accessibilityState={{ busy: loading, disabled: loading }}
               >
@@ -506,6 +544,32 @@ export default function Register() {
                   <ActivityIndicator color={Palette.textOnPrimary} size="small" />
                 ) : (
                   <Text style={styles.buttonText}>Create Account</Text>
+                )}
+              </TouchableOpacity>
+
+              {/* Divider OR */}
+              <View style={styles.dividerRow}>
+                <View style={styles.dividerLine} />
+                <Text style={styles.dividerText}>or</Text>
+                <View style={styles.dividerLine} />
+              </View>
+
+              {/* Google Sign-Up Button */}
+              <TouchableOpacity
+                style={[styles.googleButton, googleLoading && { opacity: 0.7 }]}
+                onPress={() => setShowGoogleModal(true)}
+                activeOpacity={0.85}
+                disabled={loading || googleLoading}
+                accessibilityRole="button"
+                accessibilityLabel="Sign up with Google"
+              >
+                {googleLoading ? (
+                  <ActivityIndicator color={SystemColors.label} size="small" />
+                ) : (
+                  <View style={styles.googleButtonContent}>
+                    <GoogleLogo size={20} />
+                    <Text style={styles.googleButtonText}>Continue with Google</Text>
+                  </View>
                 )}
               </TouchableOpacity>
 
@@ -521,6 +585,99 @@ export default function Register() {
               </TouchableOpacity>
             </View>
           )}
+
+          {/* Google Account Selector Modal for Sign Up */}
+          <Modal
+            visible={showGoogleModal}
+            transparent
+            animationType="fade"
+            onRequestClose={() => setShowGoogleModal(false)}
+          >
+            <View style={styles.modalOverlay}>
+              <View style={styles.googleModalContent}>
+                <View style={styles.googleModalHeader}>
+                  <GoogleLogo size={32} />
+                  <Text style={styles.googleModalTitle}>Sign up with Google</Text>
+                  <Text style={styles.googleModalSubtitle}>
+                    Use your personal Gmail or Google account to join Onodem
+                  </Text>
+                </View>
+
+                {/* Gmail Input Field for ANY User */}
+                <View style={styles.gmailInputWrapper}>
+                  <Text style={styles.gmailInputLabel}>Your Gmail or Google Account</Text>
+                  <View style={styles.gmailInputRow}>
+                    <Ionicons name="mail-outline" size={18} color={SystemColors.secondaryLabel} style={{ marginRight: 8 }} />
+                    <TextInput
+                      value={customGoogleEmail}
+                      onChangeText={setCustomGoogleEmail}
+                      placeholder="yourname@gmail.com"
+                      placeholderTextColor={Palette.textMuted}
+                      style={styles.customGoogleInput}
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      autoFocus
+                      returnKeyType="go"
+                      onSubmitEditing={() => {
+                        if (customGoogleEmail.trim()) {
+                          handleGoogleSignUp(customGoogleEmail);
+                        }
+                      }}
+                    />
+                  </View>
+                  <TouchableOpacity
+                    style={[
+                      styles.googlePrimarySubmitBtn,
+                      !customGoogleEmail.trim() && { opacity: 0.6 },
+                    ]}
+                    disabled={!customGoogleEmail.trim()}
+                    onPress={() => {
+                      if (customGoogleEmail.trim()) {
+                        handleGoogleSignUp(customGoogleEmail);
+                      }
+                    }}
+                    activeOpacity={0.85}
+                  >
+                    <Text style={styles.googlePrimarySubmitText}>Continue with Google</Text>
+                  </TouchableOpacity>
+                </View>
+
+                {/* Quick Select for Official Domain */}
+                <View style={styles.quickAccountDivider}>
+                  <View style={styles.quickDividerLine} />
+                  <Text style={styles.quickDividerText}>or quick sign-up</Text>
+                  <View style={styles.quickDividerLine} />
+                </View>
+
+                {/* Primary Option: info@onodem.com */}
+                <TouchableOpacity
+                  style={styles.googleAccountCard}
+                  onPress={() => handleGoogleSignUp("info@onodem.com")}
+                  activeOpacity={0.8}
+                >
+                  <View style={styles.googleAvatarBadge}>
+                    <Text style={styles.googleAvatarText}>O</Text>
+                  </View>
+                  <View style={styles.googleAccountInfo}>
+                    <Text style={styles.googleAccountName}>Onodem Official</Text>
+                    <Text style={styles.googleAccountEmail}>info@onodem.com</Text>
+                  </View>
+                  <View style={styles.googleActivePill}>
+                    <Text style={styles.googleActivePillText}>Sign Up</Text>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.googleCancelButton}
+                  onPress={() => setShowGoogleModal(false)}
+                  activeOpacity={0.7}
+                >
+                  <Text style={styles.googleCancelText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
         </ScrollView>
       </KeyboardAvoidingView>
     </View>
@@ -741,5 +898,186 @@ const styles = StyleSheet.create({
   changeEmailLink: {
     color: SystemColors.blue,
     fontWeight: "600",
+  },
+  /* Divider */
+  dividerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 14,
+  },
+  dividerLine: {
+    flex: 1,
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: SystemColors.separator,
+  },
+  dividerText: {
+    ...TextStyles.footnote,
+    color: SystemColors.secondaryLabel,
+    marginHorizontal: 12,
+    textTransform: "uppercase",
+  },
+  /* Google Button */
+  googleButton: {
+    height: Layout.controlHeight,
+    borderRadius: Layout.radiusMedium,
+    backgroundColor: SystemColors.secondarySystemBackground,
+    borderWidth: 1,
+    borderColor: SystemColors.separator,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  googleButtonContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
+  },
+  googleButtonText: {
+    ...TextStyles.headline,
+    color: SystemColors.label,
+    fontSize: 16,
+  },
+  /* Google Modal */
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.75)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  googleModalContent: {
+    width: "100%",
+    maxWidth: 420,
+    backgroundColor: SystemColors.secondarySystemBackground,
+    borderRadius: Layout.radiusLarge,
+    padding: 24,
+    borderWidth: 1,
+    borderColor: SystemColors.separator,
+  },
+  googleModalHeader: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  googleModalTitle: {
+    ...TextStyles.title2,
+    color: SystemColors.label,
+    marginTop: 12,
+    marginBottom: 4,
+  },
+  googleModalSubtitle: {
+    ...TextStyles.subheadline,
+    color: SystemColors.secondaryLabel,
+    textAlign: "center",
+  },
+  gmailInputWrapper: {
+    marginBottom: 16,
+  },
+  gmailInputLabel: {
+    ...TextStyles.footnote,
+    fontWeight: "600",
+    color: SystemColors.label,
+    marginBottom: 8,
+  },
+  gmailInputRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: SystemColors.tertiarySystemBackground,
+    borderRadius: Layout.radiusMedium,
+    paddingHorizontal: 12,
+    height: 48,
+    borderWidth: 1,
+    borderColor: SystemColors.separator,
+    marginBottom: 10,
+  },
+  customGoogleInput: {
+    flex: 1,
+    height: 44,
+    ...TextStyles.body,
+    color: SystemColors.label,
+  },
+  googlePrimarySubmitBtn: {
+    height: 46,
+    backgroundColor: "#4285F4",
+    borderRadius: Layout.radiusMedium,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  googlePrimarySubmitText: {
+    color: "#FFFFFF",
+    fontSize: 15,
+    fontWeight: "700",
+  },
+  quickAccountDivider: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 12,
+  },
+  quickDividerLine: {
+    flex: 1,
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: SystemColors.separator,
+  },
+  quickDividerText: {
+    ...TextStyles.caption2,
+    color: SystemColors.secondaryLabel,
+    marginHorizontal: 8,
+    textTransform: "uppercase",
+  },
+  googleAccountCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: SystemColors.tertiarySystemBackground,
+    borderRadius: Layout.radiusMedium,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: "rgba(66, 133, 244, 0.4)",
+    marginBottom: 14,
+  },
+  googleAvatarBadge: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: "#4285F4",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
+  },
+  googleAvatarText: {
+    color: "#FFFFFF",
+    fontSize: 18,
+    fontWeight: "700",
+  },
+  googleAccountInfo: {
+    flex: 1,
+  },
+  googleAccountName: {
+    ...TextStyles.headline,
+    fontSize: 15,
+    color: SystemColors.label,
+  },
+  googleAccountEmail: {
+    ...TextStyles.footnote,
+    color: SystemColors.secondaryLabel,
+    marginTop: 2,
+  },
+  googleActivePill: {
+    backgroundColor: "#4285F4",
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+  },
+  googleActivePillText: {
+    color: "#FFFFFF",
+    fontWeight: "700",
+    fontSize: 12,
+  },
+  googleCancelButton: {
+    alignItems: "center",
+    paddingVertical: 10,
+  },
+  googleCancelText: {
+    ...TextStyles.body,
+    color: SystemColors.secondaryLabel,
   },
 });

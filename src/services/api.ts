@@ -50,11 +50,23 @@ export async function setAuthToken(token: string, refreshToken?: string): Promis
 }
 
 export async function clearAuthToken(): Promise<void> {
-  await AsyncStorage.multiRemove([
-    TOKEN_KEY,
-    REFRESH_TOKEN_KEY,
-    "@honour-your-mentor/profile",
-  ]);
+  try {
+    await AsyncStorage.multiRemove([
+      TOKEN_KEY,
+      REFRESH_TOKEN_KEY,
+      "@honour-your-mentor/profile",
+    ]);
+  } catch {}
+
+  if (Platform.OS === "web" && typeof window !== "undefined") {
+    try {
+      window.localStorage.removeItem(TOKEN_KEY);
+      window.localStorage.removeItem(REFRESH_TOKEN_KEY);
+      window.localStorage.removeItem("@honour-your-mentor/profile");
+      window.localStorage.clear();
+      window.sessionStorage.clear();
+    } catch {}
+  }
 }
 
 export async function apiRequest<T = any>(
@@ -100,6 +112,8 @@ export const api = {
       apiRequest("/auth/resend-registration-otp", { method: "POST", body: JSON.stringify({ email }) }),
     login: (data: { emailOrUsername: string; password: string }) =>
       apiRequest("/auth/login", { method: "POST", body: JSON.stringify(data) }),
+    googleLogin: (data: { idToken?: string; email?: string; name?: string; avatarUrl?: string }) =>
+      apiRequest("/auth/google", { method: "POST", body: JSON.stringify(data) }),
     me: () => apiRequest("/auth/me"),
     forgotPassword: (email: string) =>
       apiRequest("/auth/forgot-password", { method: "POST", body: JSON.stringify({ email }) }),

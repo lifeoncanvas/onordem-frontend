@@ -66,6 +66,7 @@ export default function Root({ children }: PropsWithChildren) {
         {/* Appearance tokens (Dark / Light) + apply the saved choice before first paint. */}
         <style id="hym-theme-tokens" dangerouslySetInnerHTML={{ __html: themeCss() }} />
         <meta name="theme-color" content="#000000" />
+        <script src="https://accounts.google.com/gsi/client" async defer />
         <script dangerouslySetInnerHTML={{ __html: applySavedAppearance }} />
         <ScrollViewStyleReset />
       </head>

@@ -1,15 +1,22 @@
-
-
-
+import React from "react";
 import { Fonts, Palette } from "@/constants/theme";
 import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { memoryService } from "@/services/memoryService";
 
 interface AnniversaryCardProps {
   onWriteThanksPress?: () => void;
 }
 
 export default function AnniversaryCard({ onWriteThanksPress }: AnniversaryCardProps) {
+  const mentors = memoryService.getAllMentorProfiles();
+  const mentorWithDuration = mentors.find((m) => m.duration);
+
+  // If no mentor with a milestone duration exists, do not show dummy anniversary
+  if (!mentorWithDuration) {
+    return null;
+  }
+
   return (
     <LinearGradient
       colors={["#171717", "#202020"]}
@@ -27,14 +34,16 @@ export default function AnniversaryCard({ onWriteThanksPress }: AnniversaryCardP
 
       {/* Headline */}
       <Text style={styles.title}>
-        10 years ago this month, Mrs. Sharma became your teacher.
+        {mentorWithDuration.duration} with {mentorWithDuration.name}.
       </Text>
 
       {/* Bottom Row: Avatar and Action */}
       <View style={styles.bottomRow}>
         <View style={styles.avatarWrap}>
           <View style={styles.avatarCircle}>
-            <Text style={styles.avatarText}>AS</Text>
+            <Text style={styles.avatarText}>
+              {mentorWithDuration.name.slice(0, 2).toUpperCase()}
+            </Text>
           </View>
         </View>
 
@@ -43,7 +52,7 @@ export default function AnniversaryCard({ onWriteThanksPress }: AnniversaryCardP
           activeOpacity={0.85}
           style={styles.ctaButton}
           accessibilityRole="button"
-          accessibilityLabel="Write a thank-you to Mrs. Sharma"
+          accessibilityLabel={`Write a thank-you to ${mentorWithDuration.name}`}
         >
           <Text style={styles.ctaText}>Write a thank-you</Text>
         </TouchableOpacity>
@@ -58,82 +67,74 @@ const styles = StyleSheet.create({
     padding: 20,
     marginHorizontal: 20,
     marginTop: 14,
-    marginBottom: 18,
+    marginBottom: 6,
     position: "relative",
     overflow: "hidden",
     borderWidth: 1,
-    borderColor: "rgba(255, 184, 153, 0.3)",
-    boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.35)",
+    borderColor: "rgba(255,255,255,0.06)",
   },
   glowCircle: {
     position: "absolute",
-    top: -30,
-    right: -30,
+    top: -50,
+    right: -50,
     width: 140,
     height: 140,
     borderRadius: 70,
-    backgroundColor: "rgba(255, 184, 153, 0.1)",
+    backgroundColor: "rgba(255,107,156,0.08)",
   },
   badge: {
     alignSelf: "flex-start",
-    backgroundColor: "rgba(255, 184, 153, 0.18)",
-    paddingHorizontal: 14,
-    paddingVertical: 4.5,
-    borderRadius: 999,
+    backgroundColor: "rgba(255,255,255,0.08)",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 20,
     marginBottom: 12,
   },
   badgeText: {
-    color: Palette.accentPeach,
-    fontSize: 12.5,
+    fontSize: 11,
     fontWeight: "700",
-    letterSpacing: 0.3,
+    color: Palette.accentPink,
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
   },
   title: {
-    fontFamily: Fonts.serif,
     fontSize: 20,
+    fontFamily: Fonts.serif,
     fontWeight: "700",
     color: "#FFFFFF",
-    lineHeight: 28,
-    letterSpacing: -0.2,
+    lineHeight: 26,
     marginBottom: 18,
   },
   bottomRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    justifyContent: "space-between",
   },
   avatarWrap: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: "rgba(216, 180, 254, 0.28)",
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
   },
   avatarCircle: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: "#FFFFFF",
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: Palette.accentPink,
     alignItems: "center",
     justifyContent: "center",
-    boxShadow: "0px 0px 8px rgba(0, 0, 0, 0.12)",
   },
   avatarText: {
-    fontFamily: Fonts.serif,
-    fontSize: 15,
-    fontWeight: "700",
-    color: "#111111",
+    fontSize: 13,
+    fontWeight: "800",
+    color: "#FFFFFF",
   },
   ctaButton: {
     backgroundColor: "#FFFFFF",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 999,
-    boxShadow: "0px 3px 8px rgba(0, 0, 0, 0.2)",
+    paddingHorizontal: 16,
+    paddingVertical: 9,
+    borderRadius: 20,
   },
   ctaText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: "700",
     color: "#000000",
   },

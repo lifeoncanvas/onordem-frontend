@@ -93,7 +93,12 @@ export const tributeDraftService = {
   // Completed & Saved Keepsakes
   async saveCompletedTribute(tribute: TributeDesignState): Promise<void> {
     await this.initialize();
-    const existingIndex = savedKeepsakes.findIndex((k) => k.id === tribute.id);
+    const existingIndex = savedKeepsakes.findIndex(
+      (k) =>
+        k.id === tribute.id ||
+        (k.mentorName?.trim().toLowerCase() === tribute.mentorName?.trim().toLowerCase() &&
+          k.quote?.trim() === tribute.quote?.trim())
+    );
     const previousKeepsakes = [...savedKeepsakes];
     const previousDrafts = [...tributeDrafts];
     if (existingIndex >= 0) {
@@ -116,6 +121,7 @@ export const tributeDraftService = {
     api.tributes
       .create({
         mentorName: tribute.mentorName,
+        recipientEmail: tribute.recipientEmail,
         kind: "tribute",
         title: tribute.customTitle || `In Honour of ${tribute.mentorName}`,
         relationship: tribute.relationship,
@@ -126,6 +132,15 @@ export const tributeDraftService = {
         frameStyle: tribute.frameStyle,
         typographyStyle: tribute.typographyStyle,
         privacy: "PUBLIC",
+      })
+      .then((res) => {
+        if (res?.data?.id) {
+          const idx = savedKeepsakes.findIndex((k) => k.id === tribute.id);
+          if (idx >= 0) {
+            savedKeepsakes[idx] = { ...savedKeepsakes[idx], id: res.data.id };
+            persistCollections().catch(() => {});
+          }
+        }
       })
       .catch((err) => {
         console.debug("Completed tribute backend sync:", err);

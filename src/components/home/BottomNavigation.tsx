@@ -124,11 +124,11 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    // Chrome material: near-opaque so content scrolling underneath stays legible.
-    backgroundColor: SystemColors.barMaterial,
+    // Dark material: sleek grey background matching dark canvas
+    backgroundColor: "#161618",
     zIndex: 99,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: SystemColors.separator,
+    borderTopColor: "rgba(255, 255, 255, 0.12)",
   },
   container: {
     flexDirection: "row",
@@ -138,6 +138,7 @@ const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 600,
     alignSelf: "center",
+    backgroundColor: "#161618",
   },
   tabButton: {
     flex: 1,

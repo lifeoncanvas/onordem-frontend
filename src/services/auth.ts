@@ -48,6 +48,49 @@ export async function deleteAccount(): Promise<void> {
 }
 
 /**
+ * Sign in or sign up with any Google account (Gmail or Google Workspace)
+ */
+export async function signInWithGoogle(options?: {
+  idToken?: string;
+  email?: string;
+  name?: string;
+  avatarUrl?: string;
+}): Promise<any> {
+  const email = (options?.email || "info@onodem.com").trim().toLowerCase();
+  const fallbackName = email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  const payload = {
+    idToken: options?.idToken,
+    email: email,
+    name: options?.name || fallbackName,
+    avatarUrl: options?.avatarUrl,
+  };
+
+  try {
+    const res = await api.auth.googleLogin(payload);
+    if (res?.data?.accessToken) {
+      await setAuthToken(res.data.accessToken, res.data.refreshToken);
+      if (res.data.user) {
+        await userProfileService.updateProfile({
+          name: res.data.user.name || payload.name,
+          username: res.data.user.username || payload.email.split("@")[0],
+          email: res.data.user.email || payload.email,
+          bio: res.data.user.bio || "Remembering the mentors and guides who shaped my life.",
+          avatarUri:
+            res.data.user.avatarUri ||
+            payload.avatarUrl ||
+            "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80",
+        });
+      }
+      await userProfileService.syncWithBackend().catch(() => {});
+      return res;
+    }
+    return res;
+  } catch (error: any) {
+    throw new Error(error?.message || "Google Sign-In failed. Please try again.");
+  }
+}
+
+/**
  * 1. Request Password Reset / OTP Code (6-digit OTP, expires in 10 minutes)
  */
 export async function requestPasswordReset(email: string): Promise<PasswordResetResponse> {
