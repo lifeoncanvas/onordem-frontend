@@ -19,6 +19,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 import { AppFonts, MaxContentWidth, Palette, alphaColor } from "@/constants/theme";
+import BottomNavigation from "@/components/home/BottomNavigation";
 import { getAllStories, WISDOM_LESSON } from "@/data/mockStories";
 import { memoryService } from "@/services/memoryService";
 import { storyBookmarkService } from "@/services/storyBookmarkService";
@@ -694,7 +695,12 @@ export default function SavedItemsScreen() {
             </View>
           </>
         )}
+        {/* Extra Bottom Padding for floating nav */}
+        <View style={{ height: 110 }} />
       </ScrollView>
+
+      {/* Floating Bottom Navigation Bar (Active: Saved) */}
+      <BottomNavigation activeTab="saved" />
     </SafeAreaView>
   );
 }

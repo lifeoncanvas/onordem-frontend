@@ -367,30 +367,6 @@ export default function Login() {
                     </TouchableOpacity>
                   </View>
 
-                  {/* Quick Select for Official Domain */}
-                  <View style={styles.quickAccountDivider}>
-                    <View style={styles.quickDividerLine} />
-                    <Text style={styles.quickDividerText}>or quick sign-in</Text>
-                    <View style={styles.quickDividerLine} />
-                  </View>
-
-                  {/* Primary Option: info@onodem.com */}
-                  <TouchableOpacity
-                    style={styles.googleAccountCard}
-                    onPress={() => executeGoogleSignIn("info@onodem.com", "Onodem Official")}
-                    activeOpacity={0.8}
-                  >
-                    <View style={styles.googleAvatarBadge}>
-                      <Text style={styles.googleAvatarText}>O</Text>
-                    </View>
-                    <View style={styles.googleAccountInfo}>
-                      <Text style={styles.googleAccountName}>Onodem Official</Text>
-                      <Text style={styles.googleAccountEmail}>info@onodem.com</Text>
-                    </View>
-                    <View style={styles.googleActivePill}>
-                      <Text style={styles.googleActivePillText}>Sign In</Text>
-                    </View>
-                  </TouchableOpacity>
 
                   <TouchableOpacity
                     style={styles.googleCancelButton}

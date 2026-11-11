@@ -643,30 +643,6 @@ export default function Register() {
                   </TouchableOpacity>
                 </View>
 
-                {/* Quick Select for Official Domain */}
-                <View style={styles.quickAccountDivider}>
-                  <View style={styles.quickDividerLine} />
-                  <Text style={styles.quickDividerText}>or quick sign-up</Text>
-                  <View style={styles.quickDividerLine} />
-                </View>
-
-                {/* Primary Option: info@onodem.com */}
-                <TouchableOpacity
-                  style={styles.googleAccountCard}
-                  onPress={() => handleGoogleSignUp("info@onodem.com")}
-                  activeOpacity={0.8}
-                >
-                  <View style={styles.googleAvatarBadge}>
-                    <Text style={styles.googleAvatarText}>O</Text>
-                  </View>
-                  <View style={styles.googleAccountInfo}>
-                    <Text style={styles.googleAccountName}>Onodem Official</Text>
-                    <Text style={styles.googleAccountEmail}>info@onodem.com</Text>
-                  </View>
-                  <View style={styles.googleActivePill}>
-                    <Text style={styles.googleActivePillText}>Sign Up</Text>
-                  </View>
-                </TouchableOpacity>
 
                 <TouchableOpacity
                   style={styles.googleCancelButton}

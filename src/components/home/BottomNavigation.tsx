@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
@@ -78,7 +78,13 @@ export default function BottomNavigation({
   };
 
   return (
-    <View style={[styles.wrapper, { paddingBottom: Math.max(insets.bottom, 8) }]} accessibilityRole="tablist">
+    <View
+      style={[
+        styles.wrapper,
+        { paddingBottom: Math.max(insets.bottom, Platform.OS === "web" ? 10 : 8) },
+      ]}
+      accessibilityRole="tablist"
+    >
       <View style={styles.container}>
         {FIVE_TABS.map((tab) => {
           const isActive =
@@ -120,13 +126,14 @@ export default function BottomNavigation({
 
 const styles = StyleSheet.create({
   wrapper: {
-    position: "absolute",
+    position: (Platform.OS === "web" ? "fixed" : "absolute") as any,
     bottom: 0,
     left: 0,
     right: 0,
     // Dark material: sleek grey background matching dark canvas
     backgroundColor: "#161618",
-    zIndex: 99,
+    zIndex: 9999,
+    elevation: 20,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: "rgba(255, 255, 255, 0.12)",
   },
