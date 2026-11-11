@@ -14,96 +14,13 @@ export interface UserConnection {
 
 export type FollowUser = UserConnection;
 
-const STORAGE_KEY_FOLLOWING = "@hym_following_ids";
+const STORAGE_KEY_FOLLOWING = "@hym_following_ids_v2";
 const STORAGE_KEY_DISMISSED = "@hym_dismissed_suggestions";
 const STORAGE_KEY_EXTRA_PROFILES = "@hym_followed_profiles";
 
-const DEFAULT_FOLLOWERS: UserConnection[] = [
-  {
-    id: "f1",
-    name: "Aarav Patel",
-    username: "aarav_p",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80",
-    role: "Computer Science Graduate",
-    bio: "Honouring professors who inspired my journey in engineering.",
-    isFollowing: true,
-  },
-  {
-    id: "f2",
-    name: "Elena Rostova",
-    username: "elena_r",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
-    role: "Visual Artist & Designer",
-    bio: "Documenting timeless advice from art directors and teachers.",
-    isFollowing: false,
-  },
-  {
-    id: "f3",
-    name: "Kavita Rao",
-    username: "kavita_r",
-    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80",
-    role: "Literature Fellow",
-    bio: "Stories of kindness and patience that outlived school halls.",
-    isFollowing: true,
-  },
-  {
-    id: "f4",
-    name: "David Kim",
-    username: "david_k",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80",
-    role: "Biotech Researcher",
-    bio: "Honouring Dr. Mitchell and the lab family.",
-    isFollowing: true,
-  },
-];
+const DEFAULT_FOLLOWERS: UserConnection[] = [];
 
-const DEFAULT_FOLLOWING: UserConnection[] = [
-  {
-    id: "m1",
-    name: "Mrs. Anita Sharma",
-    username: "anita_sharma",
-    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&auto=format&fit=crop&q=80",
-    role: "Literature Teacher",
-    bio: "Believe in your voice before asking the world to listen.",
-    isFollowing: true,
-  },
-  {
-    id: "m2",
-    name: "Dr. David Mitchell",
-    username: "david_mitchell",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80",
-    role: "Research Advisor",
-    bio: "True mastery is quiet patience with difficult problems.",
-    isFollowing: true,
-  },
-  {
-    id: "m3",
-    name: "Vikram Rao",
-    username: "vikram_rao",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80",
-    role: "Engineering Director",
-    bio: "Build things that outlive your tenure and elevate people.",
-    isFollowing: true,
-  },
-  {
-    id: "f1",
-    name: "Aarav Patel",
-    username: "aarav_p",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80",
-    role: "Computer Science Graduate",
-    bio: "Honouring professors who inspired my journey in engineering.",
-    isFollowing: true,
-  },
-  {
-    id: "f3",
-    name: "Kavita Rao",
-    username: "kavita_r",
-    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80",
-    role: "Literature Fellow",
-    bio: "Stories of kindness and patience that outlived school halls.",
-    isFollowing: true,
-  },
-];
+const DEFAULT_FOLLOWING: UserConnection[] = [];
 
 class FollowService {
   private followingMap: Map<string, boolean> = new Map();
@@ -143,16 +60,19 @@ class FollowService {
       // non-fatal
     }
     try {
+      await AsyncStorage.removeItem("@hym_following_ids").catch(() => {});
       const stored = await AsyncStorage.getItem(STORAGE_KEY_FOLLOWING);
       if (stored) {
         const ids: string[] = JSON.parse(stored);
-        this.followingMap = new Map(ids.map((id) => [id, true]));
+        const DUMMY_IDS = new Set(["f1", "f2", "f3", "f4", "m1", "m2", "m3"]);
+        const realIds = ids.filter((id) => !DUMMY_IDS.has(id));
+        this.followingMap = new Map(realIds.map((id) => [id, true]));
       } else {
-        DEFAULT_FOLLOWING.forEach((item) => this.followingMap.set(item.id, true));
+        this.followingMap = new Map();
         await this.persist();
       }
     } catch {
-      DEFAULT_FOLLOWING.forEach((item) => this.followingMap.set(item.id, true));
+      this.followingMap = new Map();
     }
     this.initialized = true;
     this.notify();
@@ -226,8 +146,10 @@ class FollowService {
    */
   getFollowing(): UserConnection[] {
     const result: UserConnection[] = [];
+    const seenIds = new Set<string>();
     for (const [id, isFollowing] of this.followingMap) {
-      if (!isFollowing) continue;
+      if (!isFollowing || seenIds.has(id)) continue;
+      seenIds.add(id);
       const known = this.following.find((f) => f.id === id);
       if (known) {
         result.push({ ...known, isFollowing: true });
@@ -275,7 +197,12 @@ class FollowService {
 
   /** People you don't follow yet and haven't dismissed. */
   getSuggestions(limit = 10): Person[] {
-    return PEOPLE.filter((p) => !this.isFollowing(p.id) && !this.dismissed.has(p.id)).slice(0, limit);
+    const seen = new Set<string>();
+    return PEOPLE.filter((p) => {
+      if (this.isFollowing(p.id) || this.dismissed.has(p.id) || seen.has(p.id)) return false;
+      seen.add(p.id);
+      return true;
+    }).slice(0, limit);
   }
 
   async dismissSuggestion(id: string): Promise<void> {

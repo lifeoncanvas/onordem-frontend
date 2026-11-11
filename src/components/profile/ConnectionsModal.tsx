@@ -120,9 +120,16 @@ export default function ConnectionsModal({
   const rows = useMemo(() => {
     const source =
       activeTab === "followers" ? followers : activeTab === "following" ? following : suggested;
+    const uniqueMap = new Map<string, Row>();
+    for (const item of source) {
+      if (!uniqueMap.has(item.id)) {
+        uniqueMap.set(item.id, item);
+      }
+    }
+    const uniqueRows = Array.from(uniqueMap.values());
     const q = query.trim().toLowerCase();
-    if (!q) return source;
-    return source.filter((r) =>
+    if (!q) return uniqueRows;
+    return uniqueRows.filter((r) =>
       [r.name, r.username, r.role].some((field) => field.toLowerCase().includes(q))
     );
   }, [activeTab, followers, following, suggested, query]);

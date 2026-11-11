@@ -60,7 +60,7 @@ export default function Login() {
             bio: res.data.user.bio || "Remembering the mentors and guides who shaped my life.",
             avatarUri:
               res.data.user.avatarUri ||
-              "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80",
+              "",
           });
         }
         await userProfileService.syncWithBackend();
@@ -82,6 +82,8 @@ export default function Login() {
         setErrorMessage("Invalid email, username, phone number, or password. Please try again.");
       } else {
         // No backend/network available — auto-proceed in demo mode
+        const fallbackToken = `demo_token_${Date.now()}`;
+        await setAuthToken(fallbackToken, `demo_refresh_${Date.now()}`);
         await userProfileService.updateProfile({
           name: trimmed.split("@")[0],
           username: trimmed.split("@")[0],

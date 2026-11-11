@@ -22,13 +22,12 @@ export interface UserProfile {
 const PROFILE_STORAGE_KEY = "@honour-your-mentor/profile";
 
 const DEFAULT_PROFILE: UserProfile = {
-  name: "Mentee",
-  username: "mentee",
+  name: "User",
+  username: "user",
   email: "",
   phone: "",
   bio: "Remembering the mentors and guides who shaped my life.",
-  avatarUri:
-    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80",
+  avatarUri: "",
 };
 
 let profile: UserProfile = { ...DEFAULT_PROFILE };
@@ -58,6 +57,11 @@ export const userProfileService = {
                 if (parsed.name === "Sarita Baiga" || parsed.email === "sarita@example.com") {
                   await AsyncStorage.removeItem(PROFILE_STORAGE_KEY);
                 } else {
+                  // Purge dummy stock photo if it was assigned previously
+                  if (parsed.avatarUri && parsed.avatarUri.includes("photo-1534528741775-53994a69daeb")) {
+                    parsed.avatarUri = "";
+                    await AsyncStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(parsed)).catch(() => {});
+                  }
                   profile = { ...parsed, phone: parsed.phone ?? "" };
                 }
               }
@@ -91,12 +95,12 @@ export const userProfileService = {
       if (res?.data) {
         const u = res.data;
         const synced: UserProfile = {
-          name: u.name || profile.name || "Mentee",
-          username: u.username || u.email?.split("@")[0] || profile.username || "mentee",
+          name: u.name || profile.name || "User",
+          username: u.username || u.email?.split("@")[0] || profile.username || "user",
           email: u.email || profile.email || "",
           phone: u.phone || profile.phone || "",
           bio: u.bio || profile.bio || "Remembering the mentors and guides who shaped my life.",
-          avatarUri: u.avatarUri || profile.avatarUri || DEFAULT_PROFILE.avatarUri,
+          avatarUri: u.avatarUri || profile.avatarUri || "",
           birthday: u.birthday || profile.birthday,
           gender: u.gender || profile.gender,
           honouring: Array.isArray(u.honouring) && u.honouring.length ? u.honouring : profile.honouring,

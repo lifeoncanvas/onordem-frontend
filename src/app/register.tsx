@@ -63,6 +63,8 @@ export default function Register() {
 
       if (res?.data?.accessToken) {
         router.replace("/profile-setup");
+      } else {
+        router.replace("/profile-setup");
       }
     } catch (err: any) {
       setErrorMessage(err?.message || "Google sign up failed. Please try again.");
@@ -129,8 +131,7 @@ export default function Register() {
         email: trimmedEmail,
         phone: normalizedPhone,
         bio: "Remembering the mentors and guides who shaped my life.",
-        avatarUri:
-          "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80",
+        avatarUri: "",
       });
 
       const res = await api.auth.register({
@@ -158,8 +159,7 @@ export default function Register() {
             phone: res.data.user.phone || normalizedPhone,
             bio: res.data.user.bio || "Remembering the mentors and guides who shaped my life.",
             avatarUri:
-              res.data.user.avatarUri ||
-              "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80",
+              res.data.user.avatarUri || "",
           });
         }
         router.replace("/profile-setup");
@@ -246,8 +246,7 @@ export default function Register() {
             phone: res.data.user.phone || normalizedPhone,
             bio: res.data.user.bio || "Remembering the mentors and guides who shaped my life.",
             avatarUri:
-              res.data.user.avatarUri ||
-              "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80",
+              res.data.user.avatarUri || "",
           });
         }
         router.replace("/profile-setup");

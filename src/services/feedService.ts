@@ -153,5 +153,7 @@ export function getFeed(me: UserProfile): FeedPost[] {
     }))
   );
 
-  return [...mine, ...followed].sort((a, b) => b.timestamp - a.timestamp);
+  const allPosts = [...mine, ...followed];
+  const uniquePosts = Array.from(new Map(allPosts.map((p) => [p.key, p])).values());
+  return uniquePosts.sort((a, b) => b.timestamp - a.timestamp);
 }
