@@ -19,6 +19,7 @@ import {
   CommentItem,
   commentService,
 } from "@/services/commentService";
+import { api } from "@/services/api";
 
 interface CommentsModalProps {
   visible: boolean;
@@ -80,14 +81,30 @@ export default function CommentsModal({
   };
 
   const handleDelete = (commentId: string) => {
-    Alert.alert("Delete Comment", "Are you sure you want to delete your comment?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Delete",
-        style: "destructive",
-        onPress: () => commentService.deleteComment(commentId),
-      },
-    ]);
+    const executeDelete = () => {
+      commentService.deleteComment(commentId);
+      setComments((prev) => prev.filter((c) => c.id !== commentId && c.parentId !== commentId));
+      api.engagement.deleteComment(commentId).catch(() => {});
+    };
+
+    if (Platform.OS === "web") {
+      if (typeof window !== "undefined" && window.confirm) {
+        if (window.confirm("Are you sure you want to delete this comment?")) {
+          executeDelete();
+        }
+      } else {
+        executeDelete();
+      }
+    } else {
+      Alert.alert("Delete Comment", "Are you sure you want to delete this comment?", [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: executeDelete,
+        },
+      ]);
+    }
   };
 
   const handleReport = (comment: CommentItem) => {
@@ -172,27 +189,29 @@ export default function CommentsModal({
               <Text style={styles.actionLabel}>Reply</Text>
             </TouchableOpacity>
 
-            {item.isOwner ? (
-              <>
-                <TouchableOpacity
-                  onPress={() => handleStartEdit(item)}
-                  style={styles.actionBtn}
-                  activeOpacity={0.7}
-                >
-                  <Ionicons name="pencil-outline" size={13} color={Palette.textSecondary} />
-                  <Text style={styles.actionLabel}>Edit</Text>
-                </TouchableOpacity>
+            {item.isOwner && (
+              <TouchableOpacity
+                onPress={() => handleStartEdit(item)}
+                style={styles.actionBtn}
+                activeOpacity={0.7}
+              >
+                <Ionicons name="pencil-outline" size={13} color={Palette.textSecondary} />
+                <Text style={styles.actionLabel}>Edit</Text>
+              </TouchableOpacity>
+            )}
 
-                <TouchableOpacity
-                  onPress={() => handleDelete(item.id)}
-                  style={styles.actionBtn}
-                  activeOpacity={0.7}
-                >
-                  <Ionicons name="trash-outline" size={13} color="#FF6B6B" />
-                  <Text style={[styles.actionLabel, { color: "#FF6B6B" }]}>Delete</Text>
-                </TouchableOpacity>
-              </>
-            ) : (
+            <TouchableOpacity
+              onPress={() => handleDelete(item.id)}
+              style={styles.actionBtn}
+              activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel="Delete comment"
+            >
+              <Ionicons name="trash-outline" size={13} color="#FF6B6B" />
+              <Text style={[styles.actionLabel, { color: "#FF6B6B" }]}>Delete</Text>
+            </TouchableOpacity>
+
+            {!item.isOwner && (
               <TouchableOpacity
                 onPress={() => handleReport(item)}
                 style={styles.actionBtn}

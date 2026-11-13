@@ -200,28 +200,45 @@ export default function CreateScreen() {
 
   // Discard draft
   const handleDeleteDraft = (draftId: string) => {
-    Alert.alert(
-      "Discard Draft?",
-      "Are you sure you want to remove this memory draft?",
-      [
-        { text: "Keep Draft", style: "cancel" },
-        {
-          text: "Discard",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              const isTribute = tributeDrafts.some((draft) => draft.id === draftId);
-              if (isTribute) await tributeDraftService.removeDraft(draftId);
-              else await creationDraftService.removeDraft(draftId);
-              showToast("Draft removed from studio");
-            } catch (error) {
-              console.error("Unable to remove creation draft:", error);
-              Alert.alert("Could not remove draft", "Please try again.");
-            }
+    const executeDelete = async () => {
+      try {
+        const isTribute = tributeDrafts.some((draft) => draft.id === draftId);
+        if (isTribute) {
+          tributeDraftService.removeDraft(draftId);
+          setTributeDrafts(tributeDraftService.getDrafts());
+        } else {
+          await creationDraftService.removeDraft(draftId);
+          setDrafts(creationDraftService.getDrafts());
+        }
+        showToast("Draft removed from studio");
+      } catch (error) {
+        console.error("Unable to remove creation draft:", error);
+        Alert.alert("Could not remove draft", "Please try again.");
+      }
+    };
+
+    if (Platform.OS === "web") {
+      if (typeof window !== "undefined" && window.confirm) {
+        if (window.confirm("Discard draft? Are you sure you want to remove this draft?")) {
+          executeDelete();
+        }
+      } else {
+        executeDelete();
+      }
+    } else {
+      Alert.alert(
+        "Discard Draft?",
+        "Are you sure you want to remove this memory draft?",
+        [
+          { text: "Keep Draft", style: "cancel" },
+          {
+            text: "Discard",
+            style: "destructive",
+            onPress: executeDelete,
           },
-        },
-      ]
-    );
+        ]
+      );
+    }
   };
 
   const scrollViewRef = useRef<ScrollView>(null);

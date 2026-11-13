@@ -83,12 +83,9 @@ export default function DraftsSection({
             const typeConfig = getTypeBadgeConfig(draft.type);
 
             return (
-              <Pressable
+              <View
                 key={draft.id}
-                onPress={() => onResumeDraft(draft)}
-                style={({ pressed }) => [styles.draftCard, pressed && { opacity: 0.85 }]}
-                accessibilityRole="button"
-                accessibilityLabel={`Resume draft: ${draft.title}`}
+                style={styles.draftCard}
               >
                 {/* Left Type Indicator Line */}
                 <View
@@ -99,82 +96,95 @@ export default function DraftsSection({
                 />
 
                 <View style={styles.draftContent}>
-                  {/* Top Meta: Type badge & last edited */}
-                  <View style={styles.draftMetaRow}>
-                    <View
-                      style={[
-                        styles.draftTypeBadge,
-                        { backgroundColor: typeConfig.bg },
-                      ]}
-                    >
-                      <Ionicons
-                        name={typeConfig.icon}
-                        size={11}
-                        color={typeConfig.color}
-                      />
-                      <Text
+                  {/* Clickable Draft Body */}
+                  <TouchableOpacity
+                    onPress={() => onResumeDraft(draft)}
+                    activeOpacity={0.8}
+                    style={styles.draftBodyClickable}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Resume draft: ${draft.title}`}
+                  >
+                    {/* Top Meta: Type badge & last edited */}
+                    <View style={styles.draftMetaRow}>
+                      <View
                         style={[
-                          styles.draftTypeText,
-                          { color: typeConfig.color },
+                          styles.draftTypeBadge,
+                          { backgroundColor: typeConfig.bg },
                         ]}
                       >
-                        {typeConfig.label}
+                        <Ionicons
+                          name={typeConfig.icon}
+                          size={11}
+                          color={typeConfig.color}
+                        />
+                        <Text
+                          style={[
+                            styles.draftTypeText,
+                            { color: typeConfig.color },
+                          ]}
+                        >
+                          {typeConfig.label}
+                        </Text>
+                      </View>
+
+                      <Text style={styles.lastEditedText}>
+                        {draft.lastEdited}
                       </Text>
                     </View>
 
-                    <Text style={styles.lastEditedText}>
-                      {draft.lastEdited}
+                    {/* Title & Mentor */}
+                    <Text style={styles.draftTitle} numberOfLines={1}>
+                      {draft.title || "Untitled Draft"}
                     </Text>
-                  </View>
+                    {draft.mentorName ? (
+                      <Text style={styles.draftMentor} numberOfLines={1}>
+                        For: {draft.mentorName}
+                      </Text>
+                    ) : null}
 
-                  {/* Title & Mentor */}
-                  <Text style={styles.draftTitle} numberOfLines={1}>
-                    {draft.title || "Untitled Draft"}
-                  </Text>
-                  {draft.mentorName ? (
-                    <Text style={styles.draftMentor} numberOfLines={1}>
-                      For: {draft.mentorName}
-                    </Text>
-                  ) : null}
-
-                  {draft.previewText ? (
-                    <Text style={styles.draftPreview} numberOfLines={2}>
-                      {draft.previewText}
-                    </Text>
-                  ) : null}
+                    {draft.previewText ? (
+                      <Text style={styles.draftPreview} numberOfLines={2}>
+                        {draft.previewText}
+                      </Text>
+                    ) : null}
+                  </TouchableOpacity>
 
                   {/* Bottom Row: Resume Button and Delete Option */}
                   <View style={styles.draftBottomRow}>
-                    <View style={styles.resumeWrap}>
+                    <TouchableOpacity
+                      onPress={() => onResumeDraft(draft)}
+                      activeOpacity={0.7}
+                      style={styles.resumeWrap}
+                      accessibilityRole="button"
+                      accessibilityLabel="Resume writing"
+                    >
                       <Text style={styles.resumeText}>Resume writing</Text>
                       <Ionicons
                         name="arrow-forward"
                         size={12}
                         color={Palette.oceanTeal}
                       />
-                    </View>
+                    </TouchableOpacity>
 
                     {onDeleteDraft && (
-                      <Pressable
-                        onPress={(e) => {
-                          e.stopPropagation?.();
-                          onDeleteDraft(draft.id);
-                        }}
-                        hitSlop={8}
-                        style={({ pressed }) => [styles.trashBtn, pressed && { opacity: 0.6 }]}
+                      <TouchableOpacity
+                        onPress={() => onDeleteDraft(draft.id)}
+                        hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                        style={styles.trashBtn}
+                        activeOpacity={0.6}
                         accessibilityRole="button"
                         accessibilityLabel="Discard draft"
                       >
                         <Ionicons
                           name="trash-outline"
-                          size={14}
-                          color={Palette.textMuted}
+                          size={16}
+                          color="#EF4444"
                         />
-                      </Pressable>
+                      </TouchableOpacity>
                     )}
                   </View>
                 </View>
-              </Pressable>
+              </View>
             );
           })}
         </View>
@@ -377,6 +387,9 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     marginTop: 4,
   },
+  draftBodyClickable: {
+    paddingBottom: 2,
+  },
   draftBottomRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -390,6 +403,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
+    paddingVertical: 4,
   },
   resumeText: {
     fontSize: 11.5,
@@ -397,6 +411,8 @@ const styles = StyleSheet.create({
     color: Palette.oceanTeal,
   },
   trashBtn: {
-    padding: 4,
+    padding: 6,
+    borderRadius: 8,
+    backgroundColor: "rgba(239, 68, 68, 0.08)",
   },
 });

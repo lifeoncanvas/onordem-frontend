@@ -4,7 +4,7 @@ import {
   Dimensions,
   Image,
   Modal,
-  
+  Platform,
   ScrollView,
   Share,
   StatusBar,
@@ -247,23 +247,33 @@ export default function MemoryDetailScreen() {
 
   const handleDelete = () => {
     setIsMenuVisible(false);
-    Alert.alert(
-      "Delete Memory",
-      `Are you sure you want to delete this memory for ${item.mentorName}? This cannot be undone.`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: () => {
-            memoryService.deleteMemory(item.id);
-            Alert.alert("Memory Deleted", "The memory has been removed from your wall.", [
-              { text: "OK", onPress: handleBack },
-            ]);
+    const executeDelete = () => {
+      memoryService.deleteMemory(item.id);
+      handleBack();
+    };
+
+    if (Platform.OS === "web") {
+      if (typeof window !== "undefined" && window.confirm) {
+        if (window.confirm(`Are you sure you want to delete this memory for ${item.mentorName}? This cannot be undone.`)) {
+          executeDelete();
+        }
+      } else {
+        executeDelete();
+      }
+    } else {
+      Alert.alert(
+        "Delete Memory",
+        `Are you sure you want to delete this memory for ${item.mentorName}? This cannot be undone.`,
+        [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: "Delete",
+            style: "destructive",
+            onPress: executeDelete,
           },
-        },
-      ]
-    );
+        ]
+      );
+    }
   };
 
   const handleOpenEdit = () => {

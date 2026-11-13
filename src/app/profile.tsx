@@ -3,6 +3,8 @@ import {
   ActivityIndicator,
   Alert,
   Image,
+  Modal,
+  Platform,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -108,38 +110,39 @@ export default function ProfileScreen() {
     return tributeDraftService.getDrafts().length;
   }, [items]);
 
+  const [selectedPost, setSelectedPost] = useState<{ id: string; title: string; mentorName?: string } | null>(null);
+
   const openMemoryById = (id: string) => {
-    Alert.alert(
-      "Post Options",
-      "What would you like to do with this post?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "View Post",
-          onPress: () => router.push({ pathname: "/memory-detail/[id]", params: { id } }),
-        },
-        {
-          text: "Delete Post",
-          style: "destructive",
-          onPress: () => {
-            Alert.alert(
-              "Delete Post",
-              "Are you sure you want to permanently delete this post?",
-              [
-                { text: "Cancel", style: "cancel" },
-                {
-                  text: "Delete",
-                  style: "destructive",
-                  onPress: () => {
-                    memoryService.deleteMemory(id);
-                  },
-                },
-              ]
-            );
-          },
-        },
-      ]
-    );
+    const found = items.find((i) => i.id === id);
+    const title = found?.mentorName ? `Keepsake for ${found.mentorName}` : "Your keepsake post";
+    setSelectedPost({ id, title, mentorName: found?.mentorName });
+  };
+
+  const handleDeletePost = (id: string) => {
+    const doDelete = () => {
+      memoryService.deleteMemory(id);
+      setItems(memoryService.getUserCreatedItems());
+      setSelectedPost(null);
+    };
+
+    if (Platform.OS === "web") {
+      if (typeof window !== "undefined" && window.confirm) {
+        if (window.confirm("Are you sure you want to permanently delete this post?")) {
+          doDelete();
+        }
+      } else {
+        doDelete();
+      }
+    } else {
+      Alert.alert(
+        "Delete Post",
+        "Are you sure you want to permanently delete this post?",
+        [
+          { text: "Cancel", style: "cancel" },
+          { text: "Delete", style: "destructive", onPress: doDelete },
+        ]
+      );
+    }
   };
 
   return (
@@ -367,6 +370,70 @@ export default function ProfileScreen() {
         onClose={() => setIsVideoModalOpen(false)}
         onSuccess={() => setItems(memoryService.getUserCreatedItems())}
       />
+
+      {/* Post Action Sheet Modal */}
+      <Modal
+        visible={!!selectedPost}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setSelectedPost(null)}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setSelectedPost(null)}
+        >
+          <View style={styles.actionSheetCard}>
+            <View style={styles.sheetHandle} />
+            <Text style={styles.actionSheetTitle} numberOfLines={1}>
+              {selectedPost?.title || "Post Options"}
+            </Text>
+            {selectedPost?.mentorName ? (
+              <Text style={styles.actionSheetSub}>For {selectedPost.mentorName}</Text>
+            ) : null}
+
+            <TouchableOpacity
+              style={styles.actionSheetBtn}
+              onPress={() => {
+                const id = selectedPost?.id;
+                setSelectedPost(null);
+                if (id) router.push({ pathname: "/memory-detail/[id]", params: { id } });
+              }}
+              activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel="View post"
+            >
+              <Ionicons name="eye-outline" size={20} color={SystemColors.label} />
+              <Text style={styles.actionSheetBtnText}>View Post</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.actionSheetBtn, styles.actionSheetDeleteBtn]}
+              onPress={() => {
+                if (selectedPost) handleDeletePost(selectedPost.id);
+              }}
+              activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel="Delete post"
+            >
+              <Ionicons name="trash-outline" size={20} color="#EF4444" />
+              <Text style={[styles.actionSheetBtnText, { color: "#EF4444", fontWeight: "700" }]}>
+                Delete Post
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.actionSheetBtn, styles.actionSheetCancelBtn]}
+              onPress={() => setSelectedPost(null)}
+              activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel="Cancel"
+            >
+              <Text style={styles.actionSheetCancelText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -800,5 +867,73 @@ const styles = StyleSheet.create({
   signOutText: {
     ...TextStyles.body,
     color: SystemColors.red,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.65)",
+    justifyContent: "flex-end",
+    alignItems: "center",
+  },
+  actionSheetCard: {
+    width: "100%",
+    maxWidth: 500,
+    backgroundColor: "#1C1C1E",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 32,
+    borderTopWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.12)",
+  },
+  sheetHandle: {
+    width: 38,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: "rgba(255, 255, 255, 0.25)",
+    alignSelf: "center",
+    marginBottom: 16,
+  },
+  actionSheetTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#FFFFFF",
+    textAlign: "center",
+  },
+  actionSheetSub: {
+    fontSize: 13,
+    color: "#8E8E93",
+    textAlign: "center",
+    marginTop: 2,
+    marginBottom: 18,
+  },
+  actionSheetBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+    paddingVertical: 14,
+    borderRadius: 12,
+    backgroundColor: "rgba(255, 255, 255, 0.08)",
+    marginBottom: 10,
+  },
+  actionSheetBtnText: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#FFFFFF",
+  },
+  actionSheetDeleteBtn: {
+    backgroundColor: "rgba(239, 68, 68, 0.14)",
+    borderWidth: 1,
+    borderColor: "rgba(239, 68, 68, 0.3)",
+  },
+  actionSheetCancelBtn: {
+    backgroundColor: "transparent",
+    marginTop: 4,
+  },
+  actionSheetCancelText: {
+    fontSize: 15,
+    color: "#8E8E93",
+    fontWeight: "600",
   },
 });

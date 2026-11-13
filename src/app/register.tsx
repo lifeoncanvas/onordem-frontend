@@ -147,6 +147,9 @@ export default function Register() {
         setOtp(["", "", "", "", "", ""]);
         setResendTimer(45);
         setIsTimerActive(true);
+        if (res?.data?.otpCode) {
+          setResendNotice(`Verification code sent to ${trimmedEmail} (Code: ${res.data.otpCode})`);
+        }
         setTimeout(() => otpRefs.current[0]?.focus(), 200);
       } else {
         // Direct access token returned (e.g. if verification is disabled in dev)
@@ -267,11 +270,15 @@ export default function Register() {
     setLoading(true);
 
     try {
-      await api.auth.resendRegistrationOtp(email.trim());
+      const res = await api.auth.resendRegistrationOtp(email.trim());
       setResendTimer(45);
       setIsTimerActive(true);
       setOtp(["", "", "", "", "", ""]);
-      setResendNotice(`A new 6-digit code has been sent to ${email.trim()}.`);
+      if (res?.data?.otpCode) {
+        setResendNotice(`A new 6-digit code has been sent to ${email.trim()} (Code: ${res.data.otpCode}).`);
+      } else {
+        setResendNotice(`A new 6-digit code has been sent to ${email.trim()}.`);
+      }
       setTimeout(() => otpRefs.current[0]?.focus(), 150);
     } catch (err: any) {
       setErrorMessage(err?.message || "Failed to resend code. Please try again.");

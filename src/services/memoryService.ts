@@ -447,7 +447,7 @@ class MemoryService {
       this.updateMentorCounts();
       this.notify();
       this.persistUserItems();
-      const serverId = this.serverIdFor(id);
+      const serverId = this.serverIdFor(id) || id;
       if (serverId) api.tributes.delete(serverId).catch(() => {});
       this.serverIds.delete(id);
       return true;
