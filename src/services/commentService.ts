@@ -90,10 +90,9 @@ class CommentService {
 
   getComments(targetId?: string): CommentItem[] {
     if (!targetId || targetId === "default") {
-      return this.comments;
+      return this.comments.filter((c) => !c.targetId || c.targetId === "default");
     }
-    const specific = this.comments.filter((c) => c.targetId === targetId);
-    return specific.length > 0 ? specific : this.comments;
+    return this.comments.filter((c) => c.targetId === targetId);
   }
 
   addComment(params: {

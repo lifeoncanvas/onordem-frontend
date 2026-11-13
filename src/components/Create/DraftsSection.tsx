@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -82,11 +83,10 @@ export default function DraftsSection({
             const typeConfig = getTypeBadgeConfig(draft.type);
 
             return (
-              <TouchableOpacity
+              <Pressable
                 key={draft.id}
-                activeOpacity={0.8}
                 onPress={() => onResumeDraft(draft)}
-                style={styles.draftCard}
+                style={({ pressed }) => [styles.draftCard, pressed && { opacity: 0.85 }]}
                 accessibilityRole="button"
                 accessibilityLabel={`Resume draft: ${draft.title}`}
               >
@@ -155,10 +155,14 @@ export default function DraftsSection({
                     </View>
 
                     {onDeleteDraft && (
-                      <TouchableOpacity
-                        onPress={() => onDeleteDraft(draft.id)}
-                        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                        style={styles.trashBtn}
+                      <Pressable
+                        onPress={(e) => {
+                          e.stopPropagation?.();
+                          onDeleteDraft(draft.id);
+                        }}
+                        hitSlop={8}
+                        style={({ pressed }) => [styles.trashBtn, pressed && { opacity: 0.6 }]}
+                        accessibilityRole="button"
                         accessibilityLabel="Discard draft"
                       >
                         <Ionicons
@@ -166,11 +170,11 @@ export default function DraftsSection({
                           size={14}
                           color={Palette.textMuted}
                         />
-                      </TouchableOpacity>
+                      </Pressable>
                     )}
                   </View>
                 </View>
-              </TouchableOpacity>
+              </Pressable>
             );
           })}
         </View>

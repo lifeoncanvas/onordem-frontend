@@ -371,7 +371,10 @@ export default function CreationStudioScreen({
         : "Your post is now saved in your collection.";
 
       Alert.alert("Published with Care", alertMsg, [
-        { text: "Keep creating", style: "cancel", onPress: () => router.replace("/create") },
+        {
+          text: "Go to Home",
+          onPress: () => router.replace("/home"),
+        },
         {
           text: isSharedOnFeed ? "View on Memory Wall" : "View Keepsake",
           onPress: () => router.replace(isSharedOnFeed ? "/memory-wall" : { pathname: "/memory-detail/[id]", params: { id: savedId } }),
@@ -412,7 +415,7 @@ export default function CreationStudioScreen({
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
         <View style={styles.topBar}>
-          <Pressable onPress={() => router.back()} style={styles.iconButton}>
+          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace("/home")} style={styles.iconButton}>
             <Ionicons name="arrow-back" size={20} color="#FFFFFF" />
           </Pressable>
           <View style={styles.topTitleWrap}>

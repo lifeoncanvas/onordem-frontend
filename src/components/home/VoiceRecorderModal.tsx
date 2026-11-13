@@ -85,14 +85,15 @@ export default function VoiceRecorderModal({
   const stopRecording = async () => {
     setIsWorking(true);
     try {
-      const duration = recorder.currentTime || recorderState.durationMillis / 1000;
+      const durationMs = recorderState.durationMillis ?? 0;
+      const durationSec = (recorderState as any).currentTime ?? (durationMs / 1000);
       await recorder.stop();
-      const uri = recorder.uri;
+      const uri = (recorder as any).uri ?? null;
       if (!uri) {
         throw new Error("The recorder stopped without producing an audio file.");
       }
       setRecordedUri(uri);
-      setRecordedDuration(Math.max(1, Math.round(duration)));
+      setRecordedDuration(Math.max(1, Math.round(durationSec)));
       await setAudioModeAsync({
         playsInSilentMode: true,
         allowsRecording: false,

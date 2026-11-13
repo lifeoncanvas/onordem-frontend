@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Image,
   ScrollView,
   StatusBar,
@@ -108,7 +109,37 @@ export default function ProfileScreen() {
   }, [items]);
 
   const openMemoryById = (id: string) => {
-    router.push({ pathname: "/memory-detail/[id]", params: { id } });
+    Alert.alert(
+      "Post Options",
+      "What would you like to do with this post?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "View Post",
+          onPress: () => router.push({ pathname: "/memory-detail/[id]", params: { id } }),
+        },
+        {
+          text: "Delete Post",
+          style: "destructive",
+          onPress: () => {
+            Alert.alert(
+              "Delete Post",
+              "Are you sure you want to permanently delete this post?",
+              [
+                { text: "Cancel", style: "cancel" },
+                {
+                  text: "Delete",
+                  style: "destructive",
+                  onPress: () => {
+                    memoryService.deleteMemory(id);
+                  },
+                },
+              ]
+            );
+          },
+        },
+      ]
+    );
   };
 
   return (
