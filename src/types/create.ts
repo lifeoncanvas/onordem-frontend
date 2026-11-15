@@ -55,6 +55,8 @@ export interface CreationFormState {
   closing?: string;
   signature?: string;
   photoUri?: string;
+  audioUri?: string;
+  recipientEmail?: string;
   layoutStyle?: string;
   decorations?: string[];
 }

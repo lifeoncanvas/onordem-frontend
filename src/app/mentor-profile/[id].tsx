@@ -498,6 +498,15 @@ export default function MentorProfileScreen() {
     });
   };
 
+  const handleSendDM = () => {
+    setIsMenuVisible(false);
+    if (!mentor) return;
+    router.push({
+      pathname: "/open-letter",
+      params: { mentorName: mentor.name },
+    });
+  };
+
   const handleShareProfile = async () => {
     setIsMenuVisible(false);
     if (!mentor) return;
@@ -841,6 +850,15 @@ export default function MentorProfileScreen() {
               >
                 <Ionicons name="ribbon" size={16} color={Palette.accentLavender} />
                 <Text style={styles.actionGridText}>Appreciation</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={handleSendDM}
+                activeOpacity={0.8}
+                style={styles.actionGridBtn}
+              >
+                <Ionicons name="mail-outline" size={16} color={Palette.accentSky} />
+                <Text style={styles.actionGridText}>Send DM</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -1443,14 +1461,16 @@ const styles = StyleSheet.create({
     fontFamily: AppFonts.body,
   },
 
-  /* Action Grid Buttons (Bookmark, Add Memory, Tribute, Share) */
+  /* Action Grid Buttons (Bookmark, Add Memory, Tribute, Send DM, Share) */
   actionGridRow: {
     flexDirection: "row",
+    flexWrap: "wrap",
     gap: 8,
     marginBottom: 14,
   },
   actionGridBtn: {
     flex: 1,
+    minWidth: 64,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",

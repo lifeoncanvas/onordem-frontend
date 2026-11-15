@@ -9,8 +9,8 @@ import {
   View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { AppFonts, Palette } from "@/constants/theme";
-import CommentsModal from "@/components/Comments/CommentsModal";
 
 export interface GratitudePostData {
   id: string;
@@ -21,7 +21,7 @@ export interface GratitudePostData {
   message: string;
   image?: string;
   likes: number;
-  commentsCount: number;
+  commentsCount?: number;
   timeAgo: string;
 }
 
@@ -33,7 +33,6 @@ interface GratitudeCardProps {
 export default function GratitudeCard({ post, onPress }: GratitudeCardProps) {
   const [liked, setLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(post.likes);
-  const [isCommentsOpen, setIsCommentsOpen] = useState(false);
 
   const toggleLike = () => {
     setLiked((prev) => !prev);
@@ -50,86 +49,88 @@ export default function GratitudeCard({ post, onPress }: GratitudeCardProps) {
     }
   };
 
+  const handleDirectMessage = () => {
+    router.push({
+      pathname: "/open-letter",
+      params: { mentorName: post.mentorName },
+    });
+  };
+
   return (
-    <>
-      <TouchableOpacity
-        activeOpacity={0.92}
-        onPress={onPress}
-        style={styles.container}
-      >
-        <View style={styles.cardSurface}>
-          {/* Author & Mentor Header */}
-          <View style={styles.header}>
-            <Image source={{ uri: post.authorAvatar }} style={styles.authorAvatar} />
-            <View style={styles.headerText}>
-              <Text style={styles.authorName}>{post.authorName}</Text>
-              <Text style={styles.dedicationText}>
-                Honouring <Text style={styles.mentorHighlight}>{post.mentorName}</Text>
-              </Text>
-            </View>
-            <Text style={styles.timeAgo}>{post.timeAgo}</Text>
+    <TouchableOpacity
+      activeOpacity={0.92}
+      onPress={onPress}
+      style={styles.container}
+    >
+      <View style={styles.cardSurface}>
+        {/* Author & Mentor Header */}
+        <View style={styles.header}>
+          <Image source={{ uri: post.authorAvatar }} style={styles.authorAvatar} />
+          <View style={styles.headerText}>
+            <Text style={styles.authorName}>{post.authorName}</Text>
+            <Text style={styles.dedicationText}>
+              Honouring <Text style={styles.mentorHighlight}>{post.mentorName}</Text>
+            </Text>
           </View>
+          <Text style={styles.timeAgo}>{post.timeAgo}</Text>
+        </View>
 
-          {/* Message */}
-          <Text style={styles.messageText}>
-            &ldquo;{post.message}&rdquo;
-          </Text>
+        {/* Message */}
+        <Text style={styles.messageText}>
+          &ldquo;{post.message}&rdquo;
+        </Text>
 
-          {/* Optional Media */}
-          {post.image ? (
-            <View style={styles.imageContainer}>
-              <Image source={{ uri: post.image }} style={styles.postImage} />
-            </View>
-          ) : null}
+        {/* Optional Media */}
+        {post.image ? (
+          <View style={styles.imageContainer}>
+            <Image source={{ uri: post.image }} style={styles.postImage} />
+          </View>
+        ) : null}
 
-          {/* Action Bar */}
-          <View style={styles.actionBar}>
-            <View style={styles.leftActions}>
-              <TouchableOpacity
-                onPress={toggleLike}
-                activeOpacity={0.7}
-                style={styles.actionBtn}
-              >
-                <Ionicons
-                  name={liked ? "heart" : "heart-outline"}
-                  size={18}
-                  color={liked ? Palette.accentPink : Palette.textMuted}
-                />
-                <Text style={[styles.actionCount, liked && styles.actionCountActive]}>
-                  {likesCount}
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => setIsCommentsOpen(true)}
-                activeOpacity={0.7}
-                style={styles.actionBtn}
-                accessibilityRole="button"
-                accessibilityLabel={`View comments`}
-              >
-                <Ionicons name="chatbubble-outline" size={17} color={Palette.accentSky} />
-                <Text style={styles.actionCount}>{post.commentsCount}</Text>
-              </TouchableOpacity>
-            </View>
+        {/* Action Bar */}
+        <View style={styles.actionBar}>
+          <View style={styles.leftActions}>
+            <TouchableOpacity
+              onPress={toggleLike}
+              activeOpacity={0.7}
+              style={styles.actionBtn}
+              accessibilityRole="button"
+              accessibilityLabel="Like this tribute"
+            >
+              <Ionicons
+                name={liked ? "heart" : "heart-outline"}
+                size={18}
+                color={liked ? Palette.accentPink : Palette.textMuted}
+              />
+              <Text style={[styles.actionCount, liked && styles.actionCountActive]}>
+                {likesCount}
+              </Text>
+            </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={handleShare}
+              onPress={handleDirectMessage}
               activeOpacity={0.7}
-              style={styles.shareBtn}
+              style={styles.actionBtn}
+              accessibilityRole="button"
+              accessibilityLabel={`Direct message mentor ${post.mentorName}`}
             >
-              <Ionicons name="share-social-outline" size={18} color={Palette.textSecondary} />
+              <Ionicons name="mail-outline" size={17} color={Palette.accentSky} />
+              <Text style={styles.actionCount}>DM</Text>
             </TouchableOpacity>
           </View>
-        </View>
-      </TouchableOpacity>
 
-      <CommentsModal
-        visible={isCommentsOpen}
-        targetId={post.id}
-        targetTitle={`Tribute to ${post.mentorName}`}
-        onClose={() => setIsCommentsOpen(false)}
-      />
-    </>
+          <TouchableOpacity
+            onPress={handleShare}
+            activeOpacity={0.7}
+            style={styles.shareBtn}
+            accessibilityRole="button"
+            accessibilityLabel="Share post"
+          >
+            <Ionicons name="share-social-outline" size={18} color={Palette.textSecondary} />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </TouchableOpacity>
   );
 }
 

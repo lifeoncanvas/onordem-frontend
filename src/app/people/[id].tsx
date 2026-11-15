@@ -134,7 +134,7 @@ export default function PersonProfileScreen() {
           <Text style={styles.role}>{person.role}</Text>
           {person.bio ? <Text style={styles.bio}>{person.bio}</Text> : null}
 
-          {/* Action Buttons: Follow & Appreciate */}
+          {/* Action Buttons: Follow, Appreciate & DM */}
           <View style={styles.actionsRow}>
             <View style={styles.followButtonWrap}>
               <FollowButton person={person} block style={styles.followButton} />
@@ -170,6 +170,23 @@ export default function PersonProfileScreen() {
                   </Text>
                 </>
               )}
+            </Pressable>
+            <Pressable
+              onPress={() =>
+                router.push({
+                  pathname: "/open-letter",
+                  params: { mentorName: person.name },
+                })
+              }
+              style={({ pressed }) => [
+                styles.dmButton,
+                pressed && { opacity: 0.8 },
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel={`Send direct message to ${person.name}`}
+            >
+              <Ionicons name="mail-outline" size={17} color={Palette.accentSky} />
+              <Text style={styles.dmButtonText}>DM</Text>
             </Pressable>
           </View>
 
@@ -283,6 +300,24 @@ const styles = StyleSheet.create({
   },
   appreciateButtonTextActive: {
     color: "#FF3B30",
+  },
+  dmButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    minHeight: 44,
+    paddingHorizontal: 16,
+    borderRadius: Layout.radiusMedium,
+    backgroundColor: "rgba(56, 189, 248, 0.12)",
+    borderWidth: 1,
+    borderColor: "rgba(56, 189, 248, 0.35)",
+  },
+  dmButtonText: {
+    ...TextStyles.subheadline,
+    fontFamily: AppFonts.body,
+    fontWeight: "600",
+    color: Palette.accentSky,
   },
   appreciationBanner: {
     flexDirection: "row",

@@ -140,7 +140,6 @@ const GRATITUDE_POSTS: GratitudePostData[] = [
     message: "10 years ago today, you paid for my running shoes when my family could not. Today I finished my first ultra-marathon.",
     image: "https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?w=600&auto=format&fit=crop&q=80",
     likes: 248,
-    commentsCount: 34,
     timeAgo: "2h ago",
   },
   {
@@ -151,7 +150,6 @@ const GRATITUDE_POSTS: GratitudePostData[] = [
     location: "London, UK",
     message: "Thank you for teaching me that architecture isn't about stone, but about how humans breathe inside space.",
     likes: 182,
-    commentsCount: 19,
     timeAgo: "5h ago",
   },
 ];
