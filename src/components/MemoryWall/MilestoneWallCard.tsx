@@ -9,6 +9,7 @@ interface MilestoneWallCardProps {
   item: WallMilestone;
   onPress: (item: WallMilestone) => void;
   onPinPress: (id: string) => void;
+  onDeletePress?: (id: string, mentorName?: string) => void;
 }
 
 const MILESTONE_ICONS: Record<MilestoneType, keyof typeof import("@expo/vector-icons").Ionicons.glyphMap> = {
@@ -24,6 +25,7 @@ export default function MilestoneWallCard({
   item,
   onPress,
   onPinPress,
+  onDeletePress,
 }: MilestoneWallCardProps) {
   const iconName = MILESTONE_ICONS[item.type] ?? "flag-outline";
 
@@ -58,16 +60,28 @@ export default function MilestoneWallCard({
             <View style={styles.yearBadge}>
               <Text style={[styles.yearText, { color: item.accentColor }]}>{item.year}</Text>
             </View>
-            <TouchableOpacity
-              onPress={() => onPinPress(item.id)}
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-            >
-              <Ionicons
-                name={item.isPinned ? "pin" : "pin-outline"}
-                size={14}
-                color={item.isPinned ? Palette.turquoise : Palette.textMuted}
-              />
-            </TouchableOpacity>
+            <View style={styles.actionsGroup}>
+              <TouchableOpacity
+                onPress={() => onPinPress(item.id)}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                accessibilityLabel="Pin milestone"
+              >
+                <Ionicons
+                  name={item.isPinned ? "pin" : "pin-outline"}
+                  size={14}
+                  color={item.isPinned ? Palette.turquoise : Palette.textMuted}
+                />
+              </TouchableOpacity>
+              {onDeletePress && (
+                <TouchableOpacity
+                  onPress={() => onDeletePress(item.id, item.mentorName)}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                  accessibilityLabel="Delete milestone"
+                >
+                  <Ionicons name="trash-outline" size={15} color="#EF4444" />
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
 
           <Text style={styles.title} numberOfLines={2}>
@@ -135,6 +149,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 6,
+  },
+  actionsGroup: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
   },
   yearBadge: {
     backgroundColor: Palette.mintMist,

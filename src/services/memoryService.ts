@@ -89,6 +89,12 @@ function isPinOverrideMap(value: unknown): value is Record<string, boolean> {
   );
 }
 
+const DUMMY_IDS = new Set([
+  "trib_1", "trib_2", "t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10",
+  "mem1", "mem2", "mem3", "mem4", "mp1", "mp2", "mp3", "mp4", "mp5"
+]);
+const DUMMY_MENTOR_IDS = new Set(["m1", "m2", "m3", "m4", "m5"]);
+
 class MemoryService {
   private items: WallItem[] = [];
   private mentors: WallMentorProfile[] = [];
@@ -155,6 +161,10 @@ class MemoryService {
             const isPinned = this.pinOverrides.get(item.id);
             if (isPinned !== undefined) item.isPinned = isPinned;
           }
+          this.items = this.items.filter(
+            (item) => !DUMMY_IDS.has(item.id) && !DUMMY_MENTOR_IDS.has(item.mentorId || "")
+          );
+          this.mentors = this.mentors.filter((m) => !DUMMY_MENTOR_IDS.has(m.id));
           this.updateMentorCounts();
           this.notify();
         })
@@ -179,6 +189,15 @@ class MemoryService {
       const feedRes = await api.tributes.publicFeed(0, 50);
       if (feedRes?.data?.content && Array.isArray(feedRes.data.content)) {
         for (const dto of feedRes.data.content) {
+          if (
+            DUMMY_IDS.has(dto.id) ||
+            dto.userId === "u_demo_sarita" ||
+            DUMMY_MENTOR_IDS.has(dto.mentorId) ||
+            (dto.mentorName === "Mrs. Anita Sharma" && dto.id?.startsWith("trib")) ||
+            (dto.mentorName === "Vikram Rao" && dto.id?.startsWith("trib"))
+          ) {
+            continue;
+          }
           const dtoText = getItemContent(dto);
           const existingIndex = this.items.findIndex(
             (i) =>
@@ -190,7 +209,14 @@ class MemoryService {
             this.serverIds.set(this.items[existingIndex].id, dto.id);
             this.items[existingIndex] = dtoToWallItem(dto);
           } else {
-            this.items.unshift(dtoToWallItem(dto));
+            const isDuplicate = this.items.some(
+              (existing) =>
+                existing.mentorName?.trim().toLowerCase() === dto.mentorName?.trim().toLowerCase() &&
+                getItemContent(existing) === dtoText
+            );
+            if (!isDuplicate) {
+              this.items.unshift(dtoToWallItem(dto));
+            }
           }
         }
       }
@@ -202,6 +228,9 @@ class MemoryService {
       const mentorsRes = await api.mentors.list();
       if (mentorsRes?.data && Array.isArray(mentorsRes.data)) {
         for (const m of mentorsRes.data) {
+          if (DUMMY_MENTOR_IDS.has(m.id) || m.createdBy === "u_demo_sarita") {
+            continue;
+          }
           const idx = this.mentors.findIndex(
             (p) => p.id === m.id || p.name.toLowerCase() === m.name.toLowerCase()
           );
@@ -455,6 +484,21 @@ class MemoryService {
     return false;
   }
 
+  public clearAllMemories(): void {
+    const allIds = this.items.map((i) => this.serverIdFor(i.id) || i.id);
+    this.items = [];
+    this.mentors = [];
+    this.userItemIds.clear();
+    this.pinOverrides.clear();
+    this.serverIds.clear();
+    this.persistUserItems();
+    this.notify();
+    // Also request backend removal
+    allIds.forEach((id) => {
+      api.tributes.delete(id).catch(() => {});
+    });
+  }
+
   public togglePin(id: string): void {
     const item = this.items.find((i) => i.id === id);
     if (item) {
@@ -621,6 +665,22 @@ class MemoryService {
     if (!token) return; // retried by syncMyTributes() after login
     const item = this.items.find((i) => i.id === id);
     if (!item) return;
+
+    // Deduplication guard: prevent pushing twin posts with identical mentor and content
+    const storyText = (item as any).story || (item as any).letterBody || (item as any).excerpt || (item as any).preview || (item as any).quote || "";
+    const hasAlreadyUploadedTwin = this.items.some((other) => {
+      if (other.id === id) return false;
+      const otherServerId = this.serverIdFor(other.id);
+      if (!otherServerId) return false;
+      return (
+        other.mentorName?.trim().toLowerCase() === item.mentorName?.trim().toLowerCase() &&
+        getItemContent(other) === storyText.trim()
+      );
+    });
+    if (hasAlreadyUploadedTwin) {
+      return;
+    }
+
     this.pushing.add(id);
     try {
       const anyItem = item as any;
@@ -749,13 +809,13 @@ class MemoryService {
   }
 
   private loadUserItems(userItems: WallItem[]): void {
-    const DUMMY_IDS = new Set(["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10", "mem1", "mem2", "mem3", "mem4", "mp1", "mp2", "mp3", "mp4", "mp5"]);
     const cleaned = userItems.filter(
       (item) =>
         !DUMMY_IDS.has(item.id) &&
-        !(item.mentorName === "Mrs. Anita Sharma" && item.id.startsWith("t")) &&
-        !(item.mentorName === "Dr. David Mitchell" && item.id.startsWith("t")) &&
-        !(item.mentorName === "Vikram Rao" && item.id.startsWith("t"))
+        !DUMMY_MENTOR_IDS.has(item.mentorId || "") &&
+        !(item.mentorName === "Mrs. Anita Sharma" && (item.id.startsWith("t") || item.id.startsWith("trib"))) &&
+        !(item.mentorName === "Dr. David Mitchell" && (item.id.startsWith("t") || item.id.startsWith("trib"))) &&
+        !(item.mentorName === "Vikram Rao" && (item.id.startsWith("t") || item.id.startsWith("trib")))
     );
     this.userItemIds = new Set(cleaned.map((item) => item.id));
     for (const item of cleaned) {

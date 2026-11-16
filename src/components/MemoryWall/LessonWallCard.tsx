@@ -8,12 +8,14 @@ interface LessonWallCardProps {
   item: WallLesson;
   onPress: (item: WallLesson) => void;
   onPinPress: (id: string) => void;
+  onDeletePress?: (id: string, mentorName?: string) => void;
 }
 
 export default function LessonWallCard({
   item,
   onPress,
   onPinPress,
+  onDeletePress,
 }: LessonWallCardProps) {
   return (
     <TouchableOpacity
@@ -38,17 +40,28 @@ export default function LessonWallCard({
         <View style={styles.categoryChip}>
           <Text style={styles.categoryText}>{item.category}</Text>
         </View>
-        <TouchableOpacity
-          onPress={() => onPinPress(item.id)}
-          style={{ marginLeft: "auto" }}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-        >
-          <Ionicons
-            name={item.isPinned ? "pin" : "pin-outline"}
-            size={14}
-            color={item.isPinned ? Palette.turquoise : Palette.textMuted}
-          />
-        </TouchableOpacity>
+        <View style={styles.actionsGroup}>
+          <TouchableOpacity
+            onPress={() => onPinPress(item.id)}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            accessibilityLabel="Pin lesson"
+          >
+            <Ionicons
+              name={item.isPinned ? "pin" : "pin-outline"}
+              size={14}
+              color={item.isPinned ? Palette.turquoise : Palette.textMuted}
+            />
+          </TouchableOpacity>
+          {onDeletePress && (
+            <TouchableOpacity
+              onPress={() => onDeletePress(item.id, item.mentorName)}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              accessibilityLabel="Delete lesson"
+            >
+              <Ionicons name="trash-outline" size={15} color="#EF4444" />
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
 
       {/* Lesson title */}
@@ -122,6 +135,12 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textTransform: "uppercase",
     letterSpacing: 0.8,
+  },
+  actionsGroup: {
+    marginLeft: "auto",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
   },
   lessonTitle: {
     fontSize: 16,

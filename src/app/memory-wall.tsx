@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 import {
   Alert,
+  Platform,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -165,6 +166,70 @@ export default function MemoryWallScreen() {
     ]);
   }, []);
 
+  const handleDeleteItem = useCallback((id: string, mentorName?: string) => {
+    const doDelete = () => {
+      memoryService.deleteMemory(id);
+      setItems(memoryService.getAllMemories());
+      setMentors(memoryService.getAllMentorProfiles());
+    };
+
+    const confirmMsg = mentorName
+      ? `Are you sure you want to permanently delete this memory for ${mentorName}?`
+      : "Are you sure you want to permanently delete this memory?";
+
+    if (Platform.OS === "web") {
+      if (typeof window !== "undefined" && window.confirm) {
+        if (window.confirm(confirmMsg)) {
+          doDelete();
+        }
+      } else {
+        doDelete();
+      }
+    } else {
+      Alert.alert(
+        "Delete Memory",
+        confirmMsg,
+        [
+          { text: "Cancel", style: "cancel" },
+          { text: "Delete", style: "destructive", onPress: doDelete },
+        ]
+      );
+    }
+  }, []);
+
+  const handleClearWall = useCallback(() => {
+    if (items.length === 0) {
+      Alert.alert("Memory Wall", "Your memory wall is already empty.");
+      return;
+    }
+    const doClear = () => {
+      memoryService.clearAllMemories();
+      setItems([]);
+      setMentors([]);
+    };
+
+    const confirmMsg = "Are you sure you want to delete all memories and clear your memory wall? This cannot be undone.";
+
+    if (Platform.OS === "web") {
+      if (typeof window !== "undefined" && window.confirm) {
+        if (window.confirm(confirmMsg)) {
+          doClear();
+        }
+      } else {
+        doClear();
+      }
+    } else {
+      Alert.alert(
+        "Clear Memory Wall",
+        confirmMsg,
+        [
+          { text: "Cancel", style: "cancel" },
+          { text: "Clear All", style: "destructive", onPress: doClear },
+        ]
+      );
+    }
+  }, [items]);
+
   // ─── Render item ──────────────────────────────────────────────────────────
   const renderItem = (item: WallItem) => {
     switch (item.kind) {
@@ -175,6 +240,7 @@ export default function MemoryWallScreen() {
             item={item}
             onPress={() => handleItemPress(item)}
             onPinPress={handlePinToggle}
+            onDeletePress={handleDeleteItem}
           />
         );
       case "memory":
@@ -184,6 +250,7 @@ export default function MemoryWallScreen() {
             item={item}
             onPress={() => handleItemPress(item)}
             onPinPress={handlePinToggle}
+            onDeletePress={handleDeleteItem}
           />
         );
       case "letter":
@@ -193,6 +260,7 @@ export default function MemoryWallScreen() {
             item={item}
             onPress={() => handleItemPress(item)}
             onPinPress={handlePinToggle}
+            onDeletePress={handleDeleteItem}
           />
         );
       case "lesson":
@@ -202,6 +270,7 @@ export default function MemoryWallScreen() {
             item={item}
             onPress={() => handleItemPress(item)}
             onPinPress={handlePinToggle}
+            onDeletePress={handleDeleteItem}
           />
         );
       case "milestone":
@@ -211,6 +280,7 @@ export default function MemoryWallScreen() {
             item={item}
             onPress={() => handleItemPress(item)}
             onPinPress={handlePinToggle}
+            onDeletePress={handleDeleteItem}
           />
         );
     }
@@ -242,6 +312,7 @@ export default function MemoryWallScreen() {
           pinnedCount={pinnedCount}
           onSearchPress={handleSearchPress}
           onSortPress={handleSortPress}
+          onClearPress={handleClearWall}
         />
 
         {/* Optional Search Bar */}

@@ -353,6 +353,15 @@ export default function MemoryDetailScreen() {
             <Ionicons name="share-outline" size={20} color={Palette.pureWhite} />
           </TouchableOpacity>
           <TouchableOpacity
+            onPress={handleDelete}
+            activeOpacity={0.7}
+            style={[styles.navIconBtn, { backgroundColor: "rgba(239,68,68,0.18)", borderColor: "rgba(239,68,68,0.35)", borderWidth: 1 }]}
+            accessibilityRole="button"
+            accessibilityLabel="Delete this memory"
+          >
+            <Ionicons name="trash-outline" size={19} color="#EF4444" />
+          </TouchableOpacity>
+          <TouchableOpacity
             onPress={() => setIsMenuVisible((prev) => !prev)}
             activeOpacity={0.7}
             style={styles.navIconBtn}
@@ -673,6 +682,17 @@ export default function MemoryDetailScreen() {
           >
             <Ionicons name="share-social-outline" size={18} color={Palette.pureWhite} />
             <Text style={styles.shareBottomText}>Share Memory</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.deleteBottomBtn}
+            onPress={handleDelete}
+            activeOpacity={0.8}
+            accessibilityRole="button"
+            accessibilityLabel="Delete this memory"
+          >
+            <Ionicons name="trash-outline" size={18} color="#EF4444" />
+            <Text style={styles.deleteBottomText}>Delete Memory</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -1277,6 +1297,24 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "700",
     color: Palette.pureWhite,
+  },
+  deleteBottomBtn: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    paddingVertical: 14,
+    borderRadius: 14,
+    backgroundColor: "rgba(239, 68, 68, 0.12)",
+    borderWidth: 1,
+    borderColor: "rgba(239, 68, 68, 0.35)",
+    marginTop: 12,
+  },
+  deleteBottomText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#EF4444",
   },
 
   // Photo Modal

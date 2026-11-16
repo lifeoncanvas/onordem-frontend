@@ -8,6 +8,7 @@ interface LetterWallCardProps {
   item: WallLetter;
   onPress: (item: WallLetter) => void;
   onPinPress: (id: string) => void;
+  onDeletePress?: (id: string, mentorName?: string) => void;
 }
 
 const MOOD_CONFIG: Record<string, { icon: string; color: string }> = {
@@ -21,6 +22,7 @@ export default function LetterWallCard({
   item,
   onPress,
   onPinPress,
+  onDeletePress,
 }: LetterWallCardProps) {
   const mood = MOOD_CONFIG[item.mood] ?? { icon: "mail-outline", color: Palette.textSecondary };
 
@@ -41,17 +43,28 @@ export default function LetterWallCard({
           <Ionicons name={mood.icon as any} size={11} color={mood.color} />
           <Text style={[styles.moodText, { color: mood.color }]}>{item.mood}</Text>
         </View>
-        <TouchableOpacity
-          onPress={() => onPinPress(item.id)}
-          style={{ marginLeft: "auto" }}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-        >
-          <Ionicons
-            name={item.isPinned ? "pin" : "pin-outline"}
-            size={14}
-            color={item.isPinned ? Palette.turquoise : Palette.textMuted}
-          />
-        </TouchableOpacity>
+        <View style={styles.actionsGroup}>
+          <TouchableOpacity
+            onPress={() => onPinPress(item.id)}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            accessibilityLabel="Pin letter"
+          >
+            <Ionicons
+              name={item.isPinned ? "pin" : "pin-outline"}
+              size={14}
+              color={item.isPinned ? Palette.turquoise : Palette.textMuted}
+            />
+          </TouchableOpacity>
+          {onDeletePress && (
+            <TouchableOpacity
+              onPress={() => onDeletePress(item.id, item.mentorName)}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              accessibilityLabel="Delete letter"
+            >
+              <Ionicons name="trash-outline" size={15} color="#EF4444" />
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
 
       {/* Title */}
@@ -118,6 +131,12 @@ const styles = StyleSheet.create({
   moodText: {
     fontSize: 11,
     fontWeight: "700",
+  },
+  actionsGroup: {
+    marginLeft: "auto",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
   },
   title: {
     fontSize: 16,

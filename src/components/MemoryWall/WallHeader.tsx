@@ -9,6 +9,7 @@ interface WallHeaderProps {
   pinnedCount: number;
   onSearchPress: () => void;
   onSortPress: () => void;
+  onClearPress?: () => void;
 }
 
 export default function WallHeader({
@@ -16,6 +17,7 @@ export default function WallHeader({
   pinnedCount,
   onSearchPress,
   onSortPress,
+  onClearPress,
 }: WallHeaderProps) {
   return (
     <LinearGradient
@@ -38,6 +40,17 @@ export default function WallHeader({
         </View>
 
         <View style={styles.actions}>
+          {onClearPress && totalItems > 0 && (
+            <TouchableOpacity
+              onPress={onClearPress}
+              style={[styles.glassBtn, { borderColor: "rgba(239,68,68,0.4)" }]}
+              activeOpacity={0.75}
+              accessibilityLabel="Clear memory wall"
+              accessibilityRole="button"
+            >
+              <Ionicons name="trash-outline" size={18} color="#EF4444" />
+            </TouchableOpacity>
+          )}
           <TouchableOpacity
             onPress={onSearchPress}
             style={styles.glassBtn}

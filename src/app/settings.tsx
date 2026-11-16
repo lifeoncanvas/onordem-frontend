@@ -25,6 +25,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { AppFonts, Layout, Palette, SystemColors, TextStyles, alphaColor } from "@/constants/theme";
 import { deleteAccount, signOut } from "@/services/auth";
+import { memoryService } from "@/services/memoryService";
 import { themeService, type AppearancePreference } from "@/services/themeService";
 import { LANGUAGES, languageService, useLanguage, useT, type StringKey } from "@/i18n";
 
@@ -131,6 +132,28 @@ export default function SettingsScreen() {
         },
       },
     ]);
+  };
+
+  const confirmClearMemoryWall = () => {
+    const doClear = () => {
+      memoryService.clearAllMemories();
+      Alert.alert("Memory Wall", "All memories and posts have been cleared.");
+    };
+
+    const msg = "Are you sure you want to permanently delete all your memories and posts? This cannot be undone.";
+
+    if (Platform.OS === "web") {
+      if (typeof window !== "undefined" && window.confirm) {
+        if (window.confirm(msg)) doClear();
+      } else {
+        doClear();
+      }
+    } else {
+      Alert.alert("Clear Memory Wall", msg, [
+        { text: "Cancel", style: "cancel" },
+        { text: "Delete All", style: "destructive", onPress: doClear },
+      ]);
+    }
   };
 
   return (
@@ -246,6 +269,14 @@ export default function SettingsScreen() {
             subtitle={t("settings.logOut.sub")}
             loading={isLoggingOut}
             onPress={confirmSignOut}
+          />
+          <SettingsRow
+            icon="albums-outline"
+            iconColor={Palette.accentAmber}
+            title="Clear Memory Wall"
+            subtitle="Permanently delete all memories, tributes, and posts"
+            titleColor={SystemColors.red}
+            onPress={confirmClearMemoryWall}
           />
           <SettingsRow
             icon="trash-outline"

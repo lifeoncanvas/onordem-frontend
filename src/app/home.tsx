@@ -129,146 +129,10 @@ function formatAudioDuration(seconds: number) {
   return `${Math.floor(totalSeconds / 60)}:${String(totalSeconds % 60).padStart(2, "0")}`;
 }
 
-// Mock Data: Global Gratitude Feed
-const GRATITUDE_POSTS: GratitudePostData[] = [
-  {
-    id: "gp1",
-    authorName: "Rohan Varma",
-    authorAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&auto=format&fit=crop&q=80",
-    mentorName: "Coach Armstrong",
-    location: "Bangalore, India",
-    message: "10 years ago today, you paid for my running shoes when my family could not. Today I finished my first ultra-marathon.",
-    image: "https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?w=600&auto=format&fit=crop&q=80",
-    likes: 248,
-    timeAgo: "2h ago",
-  },
-  {
-    id: "gp2",
-    authorName: "Maya Lin",
-    authorAvatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&auto=format&fit=crop&q=80",
-    mentorName: "Prof. Kenneth Clark",
-    location: "London, UK",
-    message: "Thank you for teaching me that architecture isn't about stone, but about how humans breathe inside space.",
-    likes: 182,
-    timeAgo: "5h ago",
-  },
-];
-
-// Mock Data: Achievements Inspired
-const ACHIEVEMENTS_DATA: AchievementData[] = [
-  {
-    id: "ach1",
-    badgeType: "graduation",
-    title: "Master of Science in AI",
-    mentorName: "Dr. David Mitchell",
-    mentorAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80",
-    mentorRole: "Research Advisor",
-    date: "June 2024",
-    location: "Stanford Memorial Auditorium",
-    category: "Academic Milestone",
-    highlightStat: "Honors with Distinction",
-    image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&auto=format&fit=crop&q=80",
-    story: "Wrote the dedication page to you, who spent Sunday mornings showing me how to write clear equations and never let me settle for half-baked thinking.",
-    variant: "cinematic",
-  },
-  {
-    id: "ach2",
-    badgeType: "award",
-    title: "Best Debut Author Award",
-    mentorName: "Mrs. Anita Sharma",
-    mentorAvatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&auto=format&fit=crop&q=80",
-    mentorRole: "Literature Teacher",
-    date: "March 2024",
-    location: "National Book Guild Gala",
-    category: "Literary Honor",
-    highlightStat: "1st Place Gold Medal",
-    image: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=800&auto=format&fit=crop&q=80",
-    story: "Every word in that novel passed through the standards you taught in room 204. You made me believe my voice was worth preserving.",
-    variant: "editorial",
-  },
-  {
-    id: "ach3",
-    badgeType: "job",
-    title: "Promoted to Principal Engineer",
-    mentorName: "Vikram Rao",
-    mentorAvatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80",
-    mentorRole: "Engineering Director",
-    date: "January 2024",
-    location: "Cloud Systems Summit",
-    category: "Leadership Breakthrough",
-    highlightStat: "Tech Lead & Architect",
-    image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&auto=format&fit=crop&q=80",
-    story: "Remembering how you told me leadership is not a podium, but a shield for your team. This milestone belongs to your patient mentorship.",
-    variant: "luxe",
-  },
-  {
-    id: "ach4",
-    badgeType: "certificate",
-    title: "Design Fellowship Grant",
-    mentorName: "Elena Rostova",
-    mentorAvatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80",
-    mentorRole: "Art & Design Coach",
-    date: "November 2023",
-    location: "Metropolitan Design Institute",
-    category: "Creative Grant",
-    highlightStat: "Fellowship Winner",
-    image: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=800&auto=format&fit=crop&q=80",
-    story: "When I was terrified of blank canvases, you placed the brush in my hand. Today our exhibition opened to hundreds of young artists.",
-    variant: "polaroid",
-  },
-  {
-    id: "ach5",
-    badgeType: "competition",
-    title: "Global AI Hackathon Champion",
-    mentorName: "Dr. David Mitchell",
-    mentorAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80",
-    mentorRole: "Research Advisor",
-    date: "August 2023",
-    location: "TechHub International, SF",
-    category: "Innovation Victory",
-    highlightStat: "Grand Prize Winner",
-    image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&auto=format&fit=crop&q=80",
-    story: "We stayed up until dawn debugging the model. Your quiet reassurance that resilience beats talent carried our team to victory.",
-    variant: "showcase",
-  },
-];
-
-// Mock Data: Timeline Nodes
-const TIMELINE_NODES: TimelineNode[] = [
-  {
-    year: "2016",
-    title: "First Meeting",
-    subtitle: "Walked into honors literature hesitant to speak",
-    mentorName: "Mrs. Anita Sharma",
-  },
-  {
-    year: "2019",
-    title: "College Recommendation",
-    subtitle: "A letter that opened doors across the country",
-    mentorName: "Mrs. Anita Sharma",
-    isMilestone: true,
-  },
-  {
-    year: "2021",
-    title: "Lab Fellowship",
-    subtitle: "First research grant together under Dr. Mitchell",
-    mentorName: "Dr. David Mitchell",
-  },
-  {
-    year: "2023",
-    title: "First Leadership Role",
-    subtitle: "Promoted to tech lead under Vikram's guidance",
-    mentorName: "Vikram Rao",
-    isMilestone: true,
-  },
-  {
-    year: "2026",
-    title: "Mentoring the Next Gen",
-    subtitle: "Passing on the fire to two high school interns",
-    mentorName: "All Mentors",
-    isMilestone: true,
-  },
-];
+// Feed & Achievement Data (Populated dynamically from user memories & database)
+const GRATITUDE_POSTS: GratitudePostData[] = [];
+const ACHIEVEMENTS_DATA: AchievementData[] = [];
+const TIMELINE_NODES: TimelineNode[] = [];
 
 function toWallItem(memory: MemoryData): WallItem {
   const mentor = memoryService
@@ -423,6 +287,75 @@ export default function HomeScreen() {
     () => [...recordedVoiceNotes, ...VOICE_NOTES],
     [recordedVoiceNotes]
   );
+
+  const userTimelineNodes = useMemo<TimelineNode[]>(() => {
+    return wallItems
+      .filter((m) => !!m.createdAt || ("year" in m && !!m.year))
+      .slice(0, 5)
+      .map((m) => {
+        const itemYear = ("year" in m && m.year) ? String(m.year) : String(new Date(m.createdAt).getFullYear());
+        const itemTitle = ("title" in m && m.title) ? m.title : ("lessonTitle" in m && m.lessonTitle) ? m.lessonTitle : "Milestone";
+        const itemSnippet = ("story" in m && m.story) ? m.story.slice(0, 70) : ("quote" in m && m.quote) ? m.quote.slice(0, 70) : "";
+        return {
+          year: itemYear,
+          title: itemTitle,
+          subtitle: itemSnippet,
+          mentorName: m.mentorName,
+          isMilestone: m.kind === "milestone",
+        };
+      });
+  }, [wallItems]);
+
+  const userAchievements = useMemo<AchievementData[]>(() => {
+    return wallItems
+      .filter((item) => item.kind === "milestone")
+      .map((m) => {
+        const mItem = m as any;
+        const itemImg = mItem.photoUri || mItem.imageUri || undefined;
+        const itemYear = mItem.year || new Date(m.createdAt).toLocaleDateString();
+        const itemTitle = mItem.title || "Milestone";
+        const itemStory = mItem.description || mItem.story || "";
+        return {
+          id: m.id,
+          badgeType: "award" as const,
+          title: itemTitle,
+          mentorName: m.mentorName,
+          mentorAvatar: itemImg || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&auto=format&fit=crop&q=80",
+          mentorRole: m.relationship || "Mentor",
+          date: itemYear,
+          location: "Honour Your Mentor",
+          category: "Milestone",
+          highlightStat: "Preserved",
+          image: itemImg,
+          story: itemStory,
+          variant: "cinematic" as const,
+        };
+      });
+  }, [wallItems]);
+
+  const communityGratitude = useMemo<GratitudePostData[]>(() => {
+    return wallItems
+      .filter((i) => i.kind === "tribute" || i.kind === "memory")
+      .slice(0, 6)
+      .map((i) => {
+        const anyItem = i as any;
+        const author = typeof anyItem.signature === "string" && anyItem.signature.trim() ? anyItem.signature.trim() : "Member";
+        const avatarImg = anyItem.photoUri || anyItem.imageUri || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80";
+        const textMsg = anyItem.quote || anyItem.excerpt || anyItem.title || "";
+        const postImg = anyItem.photoUri || anyItem.imageUri || undefined;
+        return {
+          id: i.id,
+          authorName: String(author),
+          authorAvatar: String(avatarImg),
+          mentorName: i.mentorName,
+          location: i.relationship || "Mentorship",
+          message: String(textMsg),
+          image: postImg,
+          likes: 1,
+          timeAgo: i.createdAt ? new Date(i.createdAt).toLocaleDateString() : "Recent",
+        };
+      });
+  }, [wallItems]);
 
   // Smooth entrance fade
   const fadeAnim = useMemo(() => new Animated.Value(0), []);
@@ -710,7 +643,7 @@ export default function HomeScreen() {
             </View>
           )}
 
-          {featuredMentor && (
+          {featuredMentor ? (
             <View style={styles.featuredStory}>
               <Image
                 source={{ uri: featuredMentor.avatar }}
@@ -725,7 +658,7 @@ export default function HomeScreen() {
               />
               <View style={styles.featuredStoryContent}>
                 <View style={styles.featuredStoryBadge}>
-                  <Text style={styles.featuredStoryBadgeText}>Featured Story</Text>
+                  <Text style={styles.featuredStoryBadgeText}>Featured Mentor</Text>
                 </View>
                 <Text style={styles.featuredStoryQuote} numberOfLines={3}>
                   &ldquo;{featuredMentor.quote}&rdquo;
@@ -738,9 +671,9 @@ export default function HomeScreen() {
                   activeOpacity={0.85}
                   onPress={() => handleOpenMentor(featuredMentor)}
                   accessibilityRole="button"
-                  accessibilityLabel={`Watch ${featuredMentor.name}'s story`}
+                  accessibilityLabel={`View ${featuredMentor.name}'s profile`}
                 >
-                  <Text style={styles.watchStoryText}>Watch Story</Text>
+                  <Text style={styles.watchStoryText}>View Profile</Text>
                   <Ionicons
                     name="chevron-forward"
                     size={16}
@@ -748,6 +681,33 @@ export default function HomeScreen() {
                   />
                 </TouchableOpacity>
               </View>
+            </View>
+          ) : (
+            <View style={styles.featuredStory}>
+              <LinearGradient
+                colors={["#1B1B1F", "#0B0B0E"]}
+                style={[styles.featuredStoryOverlay, { position: "relative", padding: 22, justifyContent: "center" }]}
+              >
+                <View style={[styles.featuredStoryBadge, { backgroundColor: "rgba(236,143,62,0.2)", borderColor: "rgba(236,143,62,0.4)", borderWidth: 1 }]}>
+                  <Text style={[styles.featuredStoryBadgeText, { color: Palette.accentAmber }]}>Honour Your Mentor</Text>
+                </View>
+                <Text style={[styles.featuredStoryQuote, { fontSize: 17, lineHeight: 24 }]}>
+                  &ldquo;A mentor empowers you to see a possible future, and believe it can be obtained.&rdquo;
+                </Text>
+                <Text style={styles.featuredStoryMentor}>
+                  Start honouring the teachers, coaches, and leaders who shaped you.
+                </Text>
+                <TouchableOpacity
+                  style={[styles.watchStoryButton, { marginTop: 14 }]}
+                  activeOpacity={0.85}
+                  onPress={() => router.push("/create-mentor")}
+                  accessibilityRole="button"
+                  accessibilityLabel="Add your first mentor"
+                >
+                  <Text style={styles.watchStoryText}>Add Your First Mentor</Text>
+                  <Ionicons name="arrow-forward" size={16} color="#FFFFFF" />
+                </TouchableOpacity>
+              </LinearGradient>
             </View>
           )}
 
@@ -888,10 +848,12 @@ export default function HomeScreen() {
           {/* ======================================================== */}
           {/* 7. MENTOR TIMELINE PREVIEW                               */}
           {/* ======================================================== */}
-          <TimelinePreview
-            nodes={TIMELINE_NODES}
-            onViewFullPress={() => router.push("/memory-wall")}
-          />
+          {userTimelineNodes.length > 0 && (
+            <TimelinePreview
+              nodes={userTimelineNodes}
+              onViewFullPress={() => router.push("/memory-wall")}
+            />
+          )}
 
           {/* ======================================================== */}
           {/* 11. DAILY GRATITUDE PROMPT                               */}
@@ -963,77 +925,59 @@ export default function HomeScreen() {
           {/* ======================================================== */}
           {/* 10. ACHIEVEMENTS INSPIRED BY THEM                        */}
           {/* ======================================================== */}
-          <SectionHeader
-            title="Achievements Inspired By Them"
-            subtitle="Milestones made possible by their faith in you"
-            isDark
-          />
+          {userAchievements.length > 0 && (
+            <>
+              <SectionHeader
+                title="Achievements Inspired By Them"
+                subtitle="Milestones made possible by their faith in you"
+                isDark
+              />
 
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.achievementsScroll}
-          >
-            {ACHIEVEMENTS_DATA.map((ach, idx) => (
-                <AchievementCard
-                  key={ach.id}
-                  achievement={ach}
-                  index={idx}
-                  onPress={() => {
-                    setSelectedAchievementModal(ach);
-                    setIsAchievementModalOpen(true);
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.achievementsScroll}
+              >
+                {userAchievements.map((ach, idx) => (
+                  <AchievementCard
+                    key={ach.id}
+                    achievement={ach}
+                    index={idx}
+                    onPress={() => {
+                      setSelectedAchievementModal(ach);
+                      setIsAchievementModalOpen(true);
+                    }}
+                  />
+                ))}
+              </ScrollView>
+            </>
+          )}
 
-                    // Sync to memoryService so memory details are ready
-                    const id = `home-${ach.id}`;
-                    const existing = memoryService.getMemoryById(id);
-                    const mentor = memoryService
-                      .getAllMentorProfiles()
-                      .find(
-                        (item) => item.name.toLowerCase() === ach.mentorName.toLowerCase()
-                      );
-                    if (!existing) {
-                      memoryService.addMemory({
-                        kind: "milestone",
-                        id,
-                        mentorName: ach.mentorName,
-                        mentorId: mentor?.id,
-                        relationship: mentor?.relationship || "Mentor",
-                        title: ach.title,
-                        description: ach.story,
-                        year: ach.date.match(/\d{4}/)?.[0] || new Date().getFullYear().toString(),
-                        type: "breakthrough",
-                        accentColor: Palette.oceanTeal,
-                        imageUri: ach.image,
-                        createdAt: new Date().toISOString(),
-                        isPinned: false,
-                      });
-                    }
-                  }}
+          {/* ======================================================== */}
+          {/* 8. GRATITUDE & KEEPSAKES                                 */}
+          {/* ======================================================== */}
+          {communityGratitude.length > 0 && (
+            <>
+              <SectionHeader
+                title="Gratitude & Keepsakes"
+                subtitle="Heartfelt dedications from your archive"
+                isDark
+              />
+
+              {communityGratitude.map((post) => (
+                <GratitudeCard
+                  key={post.id}
+                  post={post}
+                  onPress={() =>
+                    Alert.alert(
+                      `Honouring ${post.mentorName}`,
+                      `${post.authorName} · ${post.location}\n\n${post.message}`
+                    )
+                  }
                 />
-            ))}
-          </ScrollView>
-
-          {/* ======================================================== */}
-          {/* 8. GRATITUDE FROM AROUND THE WORLD                       */}
-          {/* ======================================================== */}
-          <SectionHeader
-            title="Gratitude From Around the World"
-            subtitle="Heartfelt stories shared by the global community"
-            isDark
-          />
-
-          {GRATITUDE_POSTS.map((post) => (
-            <GratitudeCard
-              key={post.id}
-              post={post}
-              onPress={() =>
-                Alert.alert(
-                  `Honouring ${post.mentorName}`,
-                  `${post.authorName} · ${post.location}\n\n${post.message}`
-                )
-              }
-            />
-          ))}
+              ))}
+            </>
+          )}
 
           {/* Extra Bottom Padding for floating nav */}
           <View style={{ height: 110 }} />

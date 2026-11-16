@@ -14,12 +14,14 @@ interface MemoryWallCardProps {
   item: WallMemory;
   onPress: (item: WallMemory) => void;
   onPinPress: (id: string) => void;
+  onDeletePress?: (id: string, mentorName?: string) => void;
 }
 
 export default function MemoryWallCard({
   item,
   onPress,
   onPinPress,
+  onDeletePress,
 }: MemoryWallCardProps) {
   return (
     <TouchableOpacity
@@ -40,16 +42,34 @@ export default function MemoryWallCard({
             <Ionicons name="images-outline" size={10} color={Palette.textMuted} />
             <Text style={styles.typeText}>Memo · {item.year}</Text>
           </View>
-          <TouchableOpacity
-            onPress={() => onPinPress(item.id)}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          >
-            <Ionicons
-              name={item.isPinned ? "pin" : "pin-outline"}
-              size={14}
-              color={item.isPinned ? Palette.turquoise : Palette.textMuted}
-            />
-          </TouchableOpacity>
+          <View style={styles.cardActionsGroup}>
+            <TouchableOpacity
+              onPress={() => onPinPress(item.id)}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              accessibilityRole="button"
+              accessibilityLabel="Pin memory"
+            >
+              <Ionicons
+                name={item.isPinned ? "pin" : "pin-outline"}
+                size={14}
+                color={item.isPinned ? Palette.turquoise : Palette.textMuted}
+              />
+            </TouchableOpacity>
+            {onDeletePress && (
+              <TouchableOpacity
+                onPress={() => onDeletePress(item.id, item.mentorName)}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                accessibilityRole="button"
+                accessibilityLabel="Delete memory"
+              >
+                <Ionicons
+                  name="trash-outline"
+                  size={15}
+                  color="#EF4444"
+                />
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
 
         <Text style={styles.title} numberOfLines={1}>
@@ -104,6 +124,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 6,
+  },
+  cardActionsGroup: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
   },
   typeBadge: {
     flexDirection: "row",

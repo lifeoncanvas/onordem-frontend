@@ -25,6 +25,9 @@ const copyDesign = (design: TributeDesignState): TributeDesignState => ({
   decorations: [...design.decorations],
 });
 
+// Track keepsake IDs that have already been dispatched to backend to prevent duplicate API calls
+const syncedKeepsakeIds = new Set<string>();
+
 export const tributeDraftService = {
   initialize(): Promise<void> {
     if (!initializePromise) {
@@ -117,34 +120,39 @@ export const tributeDraftService = {
     }
     notify();
 
-    // Asynchronously synchronize to Spring Boot backend + Neon DB
-    api.tributes
-      .create({
-        mentorName: tribute.mentorName,
-        recipientEmail: tribute.recipientEmail,
-        kind: "tribute",
-        title: tribute.customTitle || `In Honour of ${tribute.mentorName}`,
-        relationship: tribute.relationship,
-        photoUri: tribute.photoUri,
-        quote: tribute.quote,
-        story: tribute.story,
-        templateId: tribute.templateId,
-        frameStyle: tribute.frameStyle,
-        typographyStyle: tribute.typographyStyle,
-        privacy: "PUBLIC",
-      })
-      .then((res) => {
-        if (res?.data?.id) {
-          const idx = savedKeepsakes.findIndex((k) => k.id === tribute.id);
-          if (idx >= 0) {
-            savedKeepsakes[idx] = { ...savedKeepsakes[idx], id: res.data.id };
-            persistCollections().catch(() => {});
+    // Asynchronously synchronize to Spring Boot backend + Neon DB (once per keepsake)
+    if (!tribute.id.startsWith("trib_") && !syncedKeepsakeIds.has(tribute.id)) {
+      syncedKeepsakeIds.add(tribute.id);
+      api.tributes
+        .create({
+          mentorName: tribute.mentorName,
+          recipientEmail: tribute.recipientEmail,
+          kind: "tribute",
+          title: tribute.customTitle || `In Honour of ${tribute.mentorName}`,
+          relationship: tribute.relationship,
+          photoUri: tribute.photoUri,
+          quote: tribute.quote,
+          story: tribute.story,
+          templateId: tribute.templateId,
+          frameStyle: tribute.frameStyle,
+          typographyStyle: tribute.typographyStyle,
+          privacy: "PUBLIC",
+        })
+        .then((res) => {
+          if (res?.data?.id) {
+            syncedKeepsakeIds.add(res.data.id);
+            const idx = savedKeepsakes.findIndex((k) => k.id === tribute.id);
+            if (idx >= 0) {
+              savedKeepsakes[idx] = { ...savedKeepsakes[idx], id: res.data.id };
+              persistCollections().catch(() => {});
+            }
           }
-        }
-      })
-      .catch((err) => {
-        console.debug("Completed tribute backend sync:", err);
-      });
+        })
+        .catch((err) => {
+          syncedKeepsakeIds.delete(tribute.id);
+          console.debug("Completed tribute backend sync:", err);
+        });
+    }
   },
 
   getSavedKeepsakes(): TributeDesignState[] {
@@ -261,10 +269,10 @@ export const tributeDraftService = {
     const draft = tributeDrafts.find((item) => item.id === id);
     return draft
       ? {
-          ...draft,
-          payload: { ...draft.payload },
-          designState: draft.designState ? copyDesign(draft.designState) : null,
-        }
+        ...draft,
+        payload: { ...draft.payload },
+        designState: draft.designState ? copyDesign(draft.designState) : null,
+      }
       : undefined;
   },
 

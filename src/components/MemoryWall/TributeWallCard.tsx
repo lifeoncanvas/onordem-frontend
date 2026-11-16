@@ -9,12 +9,14 @@ interface TributeWallCardProps {
   item: WallTribute;
   onPress: (item: WallTribute) => void;
   onPinPress: (id: string) => void;
+  onDeletePress?: (id: string, mentorName?: string) => void;
 }
 
 export default function TributeWallCard({
   item,
   onPress,
   onPinPress,
+  onDeletePress,
 }: TributeWallCardProps) {
   return (
     <TouchableOpacity
@@ -48,18 +50,32 @@ export default function TributeWallCard({
             <Ionicons name="share-social" size={11} color="#FFF8F0" />
           </View>
         )}
-        <TouchableOpacity
-          onPress={() => onPinPress(item.id)}
-          style={styles.pinButton}
-          activeOpacity={0.7}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-        >
-          <Ionicons
-            name={item.isPinned ? "pin" : "pin-outline"}
-            size={16}
-            color="rgba(252,238,228,0.8)"
-          />
-        </TouchableOpacity>
+        <View style={styles.actionIconsRow}>
+          <TouchableOpacity
+            onPress={() => onPinPress(item.id)}
+            style={styles.pinButton}
+            activeOpacity={0.7}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            accessibilityLabel="Pin tribute"
+          >
+            <Ionicons
+              name={item.isPinned ? "pin" : "pin-outline"}
+              size={16}
+              color="rgba(252,238,228,0.8)"
+            />
+          </TouchableOpacity>
+          {onDeletePress && (
+            <TouchableOpacity
+              onPress={() => onDeletePress(item.id, item.mentorName)}
+              style={[styles.pinButton, { backgroundColor: "rgba(239,68,68,0.25)" }]}
+              activeOpacity={0.7}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              accessibilityLabel="Delete tribute"
+            >
+              <Ionicons name="trash-outline" size={15} color="#EF4444" />
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
 
       {/* Content */}
@@ -130,9 +146,14 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 5,
   },
-  pinButton: {
+  actionIconsRow: {
     marginLeft: "auto",
-    backgroundColor: "rgba(0,0,0,0.3)",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  pinButton: {
+    backgroundColor: "rgba(0,0,0,0.45)",
     borderRadius: 10,
     padding: 6,
   },
