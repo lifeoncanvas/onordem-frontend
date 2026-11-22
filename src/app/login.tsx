@@ -110,8 +110,8 @@ export default function Login() {
     try {
       const derivedName =
         name ||
-        (cleanEmail === "info@onodem.com"
-          ? "Onodem Official"
+        (cleanEmail === "info@honodem.com" || cleanEmail === "info@onodem.com"
+          ? "Honodem Official"
           : cleanEmail.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()));
 
       const res = await signInWithGoogle({

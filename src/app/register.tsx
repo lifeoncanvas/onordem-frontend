@@ -40,7 +40,7 @@ export default function Register() {
   const [customGoogleEmail, setCustomGoogleEmail] = useState("");
 
   const handleGoogleSignUp = async (chosenEmail?: string) => {
-    let cleanEmail = (chosenEmail || customGoogleEmail || email || "info@onodem.com").trim().toLowerCase();
+    let cleanEmail = (chosenEmail || customGoogleEmail || email || "info@honodem.com").trim().toLowerCase();
     if (!cleanEmail.includes("@")) {
       cleanEmail = `${cleanEmail}@gmail.com`;
     }
@@ -52,8 +52,8 @@ export default function Register() {
     try {
       const derivedName =
         name.trim() ||
-        (cleanEmail === "info@onodem.com"
-          ? "Onodem Official"
+        (cleanEmail === "info@honodem.com" || cleanEmail === "info@onodem.com"
+          ? "Honodem Official"
           : cleanEmail.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()));
 
       const res = await signInWithGoogle({
@@ -392,7 +392,7 @@ export default function Register() {
               <View style={styles.otpHelperCard}>
                 <Ionicons name="information-circle-outline" size={16} color={SystemColors.blue} />
                 <Text style={styles.otpHelperText}>
-                  Official code sent from info@onodem.com. Code expires in 10 minutes. If you do not see it, check your spam or junk folder.
+                  Official code sent from info@honodem.com. Code expires in 10 minutes. If you do not see it, check your spam or junk folder.
                 </Text>
               </View>
 

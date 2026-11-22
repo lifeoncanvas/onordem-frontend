@@ -15,7 +15,7 @@ const QrModalContext = createContext<QrModalContextValue>({
 
 export function QrModalProvider({ children }: { children: ReactNode }) {
   const [visible, setVisible] = useState(false);
-  const [modalUrl, setModalUrl] = useState("https://onodem.com");
+  const [modalUrl, setModalUrl] = useState("https://honodem.com");
   const [activeTab, setActiveTab] = useState<"show" | "scan">("show");
 
   const openQrModal = (url?: string, initialTab: "show" | "scan" = "show") => {

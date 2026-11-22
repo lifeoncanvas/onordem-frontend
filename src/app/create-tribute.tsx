@@ -392,7 +392,7 @@ export default function CreateTributeScreen() {
                 Their email (optional)
               </Text>
               <Text style={styles.sectionHint}>
-                We will send an official appreciation notification to this address from info@onodem.com.
+                We will send an official appreciation notification to this address from info@honodem.com.
               </Text>
               <TextInput
                 value={recipientEmail}

@@ -33,8 +33,8 @@ function LayoutContent() {
 
   return (
     <View style={styles.rootWrapper}>
-      {showWebChrome && <PwaInstallBanner onOpenQrModal={() => openQrModal("https://onodem.com")} />}
-      {showWebChrome && <ResponsiveHeader onOpenQrModal={() => openQrModal("https://onodem.com")} />}
+      {showWebChrome && <PwaInstallBanner onOpenQrModal={() => openQrModal("https://honodem.com")} />}
+      {showWebChrome && <ResponsiveHeader onOpenQrModal={() => openQrModal("https://honodem.com")} />}
       <View style={[styles.mainShell, isWide && styles.desktopShell]}>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />

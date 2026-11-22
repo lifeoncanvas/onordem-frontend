@@ -23,7 +23,7 @@ export default function QRCodeSvg({
       return generateQRCode(value);
     } catch {
       // Fallback simple 21x21 QR code if generation fails on extreme strings
-      return generateQRCode("https://onodem.com");
+      return generateQRCode("https://honodem.com");
     }
   }, [value]);
 

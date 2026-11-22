@@ -633,7 +633,7 @@ export default function HomeScreen() {
                   styles.webQrPromptButton,
                   windowWidth < 480 && styles.webQrPromptButtonNarrow,
                 ]}
-                onPress={() => openQrModal("https://onodem.com", "show")}
+                onPress={() => openQrModal("https://honodem.com", "show")}
                 activeOpacity={0.85}
                 accessibilityRole="button"
                 accessibilityLabel="Get the app"

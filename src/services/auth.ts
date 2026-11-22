@@ -56,7 +56,7 @@ export async function signInWithGoogle(options?: {
   name?: string;
   avatarUrl?: string;
 }): Promise<any> {
-  const email = (options?.email || "info@onodem.com").trim().toLowerCase();
+  const email = (options?.email || "info@honodem.com").trim().toLowerCase();
   const fallbackName = email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
   const payload = {
     idToken: options?.idToken,

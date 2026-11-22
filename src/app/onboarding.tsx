@@ -265,7 +265,7 @@ export default function OnboardingScreen() {
                 {/* Phone QR Trigger */}
                 <TouchableOpacity
                   style={styles.desktopQrLink}
-                  onPress={() => openQrModal("https://onodem.com")}
+                  onPress={() => openQrModal("https://honodem.com")}
                   activeOpacity={0.8}
                 >
                   <Ionicons name="phone-portrait-outline" size={14} color={Palette.textSecondary} />

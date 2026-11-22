@@ -25,7 +25,7 @@ interface QrCodeModalProps {
 export default function QrCodeModal({
   visible,
   onClose,
-  appUrl = "https://onodem.com",
+  appUrl = "https://honodem.com",
   initialTab = "show",
 }: QrCodeModalProps) {
   const { width, height } = useWindowDimensions();

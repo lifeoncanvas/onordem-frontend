@@ -578,7 +578,7 @@ export default function CreationStudioScreen({
                 color={sendDedicationEmail ? Palette.accentMint : "#666666"}
               />
               <Text style={styles.dedicationOptionText}>
-                Send email notification from info@onodem.com when saved
+                Send email notification from info@honodem.com when saved
               </Text>
             </TouchableOpacity>
 

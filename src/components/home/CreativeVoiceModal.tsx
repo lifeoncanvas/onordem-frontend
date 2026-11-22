@@ -688,7 +688,7 @@ export default function CreativeVoiceModal({
                     color={sendEmailDedication ? Palette.accentMint : "#666666"}
                   />
                   <Text style={styles.optionText}>
-                    Send dedication email from info@onodem.com with link
+                    Send dedication email from info@honodem.com with link
                   </Text>
                 </TouchableOpacity>
 

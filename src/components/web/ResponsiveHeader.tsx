@@ -33,7 +33,7 @@ export default function ResponsiveHeader({ onOpenQrModal }: ResponsiveHeaderProp
 
   const handleOpenQr = () => {
     if (onOpenQrModal) onOpenQrModal();
-    else openQrModal("https://onodem.com");
+    else openQrModal("https://honodem.com");
   };
 
   const isAuthRoute =

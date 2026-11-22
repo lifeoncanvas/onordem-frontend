@@ -446,7 +446,7 @@ export default function ForgotPasswordScreen() {
                   <View style={{ flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: "#1C1C1E", borderRadius: 10, padding: 10, marginBottom: 16 }}>
                     <Ionicons name="information-circle-outline" size={16} color={Palette.accentSky} />
                     <Text style={{ color: "#A1A1AA", fontSize: 12, flex: 1, lineHeight: 16 }}>
-                      Code sent from info@onodem.com. It expires in 10 minutes. Can&apos;t find it? Check your spam folder or resend the code.
+                      Code sent from info@honodem.com. It expires in 10 minutes. Can&apos;t find it? Check your spam folder or resend the code.
                     </Text>
                   </View>
 

@@ -17,7 +17,7 @@ export function getApiBaseUrl(): string {
     if (host === "localhost" || host === "127.0.0.1") {
       return "http://localhost:8080/api/v1";
     }
-    // When served from onodem.com or www.onodem.com, route to the same origin /api/v1
+    // When served from honodem.com, onodem.com or localhost, route to the same origin /api/v1
     // Nginx reverse-proxies /api/ directly to the Spring Boot backend on 127.0.0.1:8080
     // This avoids DNS subdomain resolution failures (ERR_NAME_NOT_RESOLVED) and CORS blocks
     return `${window.location.origin}/api/v1`;
@@ -29,8 +29,8 @@ export function getApiBaseUrl(): string {
     return Platform.OS === "android" ? "http://10.0.2.2:8080/api/v1" : "http://localhost:8080/api/v1";
   }
 
-  // Production native app fallback
-  return "https://onodem.com/api/v1";
+  // Production native app fallback (Primary: honodem.com)
+  return "https://honodem.com/api/v1";
 }
 
 export const API_BASE_URL = getApiBaseUrl();
@@ -56,7 +56,7 @@ export async function clearAuthToken(): Promise<void> {
       REFRESH_TOKEN_KEY,
       "@honour-your-mentor/profile",
     ]);
-  } catch {}
+  } catch { }
 
   if (Platform.OS === "web" && typeof window !== "undefined") {
     try {
@@ -65,7 +65,7 @@ export async function clearAuthToken(): Promise<void> {
       window.localStorage.removeItem("@honour-your-mentor/profile");
       window.localStorage.clear();
       window.sessionStorage.clear();
-    } catch {}
+    } catch { }
   }
 }
 
