@@ -38,6 +38,8 @@ export default function Register() {
   const [resendNotice, setResendNotice] = useState<string | null>(null);
   const [showGoogleModal, setShowGoogleModal] = useState(false);
   const [customGoogleEmail, setCustomGoogleEmail] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isDemoFallbackPossible, setIsDemoFallbackPossible] = useState(false);
 
   const handleGoogleSignUp = async (chosenEmail?: string) => {
     let cleanEmail = (chosenEmail || customGoogleEmail || email || "info@honodem.com").trim().toLowerCase();
@@ -101,8 +103,24 @@ export default function Register() {
     const trimmedPhone = phone.trim();
     const normalizedPhone = trimmedPhone.replace(/[\s().-]/g, "");
 
-    if (!trimmedName || !trimmedEmail || !password) {
-      setErrorMessage("Please enter your name, email, and password.");
+    if (!trimmedName) {
+      setErrorMessage("Please enter your full name.");
+      return;
+    }
+
+    if (trimmedName.length < 2) {
+      setErrorMessage("Full name must be at least 2 characters long.");
+      return;
+    }
+
+    if (!trimmedEmail) {
+      setErrorMessage("Please enter your email address.");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      setErrorMessage("Please enter a valid email address (e.g. name@example.com).");
       return;
     }
 
@@ -114,6 +132,11 @@ export default function Register() {
       }
     }
 
+    if (!password) {
+      setErrorMessage("Please enter a password.");
+      return;
+    }
+
     if (password.length < 8) {
       setErrorMessage("Password must be at least 8 characters long.");
       return;
@@ -122,6 +145,7 @@ export default function Register() {
     setLoading(true);
     setErrorMessage(null);
     setResendNotice(null);
+    setIsDemoFallbackPossible(false);
 
     try {
       // Pre-initialize local profile with entered details
@@ -149,6 +173,8 @@ export default function Register() {
         setIsTimerActive(true);
         if (res?.data?.otpCode) {
           setResendNotice(`Verification code sent to ${trimmedEmail} (Code: ${res.data.otpCode})`);
+        } else {
+          setResendNotice(`Verification code sent to ${trimmedEmail}`);
         }
         setTimeout(() => otpRefs.current[0]?.focus(), 200);
       } else {
@@ -168,26 +194,48 @@ export default function Register() {
         router.replace("/profile-setup");
       }
     } catch (err: any) {
-      const msg = err.message || "Registration failed";
+      const msg = err?.message || "Registration failed";
+      const lower = msg.toLowerCase();
       if (
-        msg.toLowerCase().includes("already registered") ||
-        msg.toLowerCase().includes("already exists") ||
-        msg.toLowerCase().includes("duplicate")
+        lower.includes("already registered") ||
+        lower.includes("already exists") ||
+        lower.includes("duplicate")
       ) {
-        setErrorMessage("An account with this email or phone number already exists. Try logging in.");
+        setErrorMessage("An account with this email address already exists. Please log in instead.");
+      } else if (
+        lower.includes("502") ||
+        lower.includes("bad gateway") ||
+        lower.includes("failed to fetch") ||
+        lower.includes("network") ||
+        lower.includes("timeout")
+      ) {
+        setErrorMessage("Unable to connect to the backend server (502 Bad Gateway). Please try again or continue in demo mode.");
+        setIsDemoFallbackPossible(true);
       } else {
-        Alert.alert(
-          "Registration Notice",
-          `${msg}. Would you like to continue in demo mode?`,
-          [
-            { text: "Continue", onPress: () => router.replace("/profile-setup") },
-            { text: "Retry", style: "cancel" },
-          ]
-        );
+        setErrorMessage(msg);
+        setIsDemoFallbackPossible(true);
       }
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleContinueDemoMode = async () => {
+    const trimmedName = name.trim() || "New Member";
+    const trimmedEmail = email.trim() || "user@honodem.com";
+    const normalizedPhone = phone.trim().replace(/[\s().-]/g, "");
+
+    const fallbackToken = `demo_token_${Date.now()}`;
+    await setAuthToken(fallbackToken, `demo_refresh_${Date.now()}`);
+    await userProfileService.updateProfile({
+      name: trimmedName,
+      username: trimmedEmail.split("@")[0] || "user",
+      email: trimmedEmail,
+      phone: normalizedPhone,
+      bio: "Remembering the mentors and guides who shaped my life.",
+      avatarUri: "",
+    });
+    router.replace("/profile-setup");
   };
 
   const handleOtpChange = (text: string, index: number) => {
@@ -257,7 +305,16 @@ export default function Register() {
         router.replace("/profile-setup");
       }
     } catch (err: any) {
-      setErrorMessage(err?.message || "Invalid or expired verification code. Please check and try again.");
+      const msg = err?.message || "Invalid or expired verification code. Please check and try again.";
+      setErrorMessage(msg);
+      if (
+        msg.includes("502") ||
+        msg.toLowerCase().includes("bad gateway") ||
+        msg.toLowerCase().includes("network") ||
+        msg.toLowerCase().includes("failed to fetch")
+      ) {
+        setIsDemoFallbackPossible(true);
+      }
     } finally {
       setLoading(false);
     }
@@ -355,8 +412,20 @@ export default function Register() {
               {/* Error Banner */}
               {errorMessage && (
                 <View style={styles.errorContainer}>
-                  <Ionicons name="alert-circle" size={16} color={SystemColors.red} />
-                  <Text style={styles.errorText}>{errorMessage}</Text>
+                  <Ionicons name="alert-circle" size={18} color={SystemColors.red} style={{ marginTop: 2 }} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.errorText}>{errorMessage}</Text>
+                    {isDemoFallbackPossible && (
+                      <TouchableOpacity
+                        style={styles.demoModeButton}
+                        onPress={handleContinueDemoMode}
+                        activeOpacity={0.8}
+                      >
+                        <Text style={styles.demoModeButtonText}>Continue in Demo Mode</Text>
+                        <Ionicons name="arrow-forward" size={14} color="#FFFFFF" />
+                      </TouchableOpacity>
+                    )}
+                  </View>
                 </View>
               )}
 
@@ -467,8 +536,20 @@ export default function Register() {
               {/* Error Banner */}
               {errorMessage && (
                 <View style={styles.errorContainer}>
-                  <Ionicons name="alert-circle" size={16} color={SystemColors.red} />
-                  <Text style={styles.errorText}>{errorMessage}</Text>
+                  <Ionicons name="alert-circle" size={18} color={SystemColors.red} style={{ marginTop: 2 }} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.errorText}>{errorMessage}</Text>
+                    {isDemoFallbackPossible && (
+                      <TouchableOpacity
+                        style={styles.demoModeButton}
+                        onPress={handleContinueDemoMode}
+                        activeOpacity={0.8}
+                      >
+                        <Text style={styles.demoModeButtonText}>Continue in Demo Mode</Text>
+                        <Ionicons name="arrow-forward" size={14} color="#FFFFFF" />
+                      </TouchableOpacity>
+                    )}
+                  </View>
                 </View>
               )}
 
@@ -519,35 +600,57 @@ export default function Register() {
                   accessibilityLabel="Phone number, optional"
                 />
                 <View style={styles.separator} />
-                <TextInput
-                  placeholder="Password"
-                  placeholderTextColor={Palette.textMuted}
-                  style={styles.input}
-                  secureTextEntry
-                  autoComplete="new-password"
-                  textContentType="newPassword"
-                  returnKeyType="go"
-                  onSubmitEditing={handleRegister}
-                  value={password}
-                  onChangeText={setPassword}
-                  selectionColor={SystemColors.blue}
-                  accessibilityLabel="Password"
-                />
+                <View style={styles.passwordRow}>
+                  <TextInput
+                    placeholder="Password"
+                    placeholderTextColor={Palette.textMuted}
+                    style={styles.passwordInput}
+                    secureTextEntry={!showPassword}
+                    autoComplete="new-password"
+                    textContentType="newPassword"
+                    returnKeyType="go"
+                    onSubmitEditing={handleRegister}
+                    value={password}
+                    onChangeText={(val) => {
+                      setPassword(val);
+                      if (errorMessage) setErrorMessage(null);
+                    }}
+                    selectionColor={SystemColors.blue}
+                    accessibilityLabel="Password"
+                  />
+                  <TouchableOpacity
+                    onPress={() => setShowPassword((prev) => !prev)}
+                    activeOpacity={0.7}
+                    hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                    style={styles.eyeToggle}
+                    accessibilityRole="button"
+                    accessibilityLabel={showPassword ? "Hide password" : "Show password"}
+                  >
+                    <Ionicons
+                      name={showPassword ? "eye-off" : "eye"}
+                      size={20}
+                      color={SystemColors.secondaryLabel}
+                    />
+                  </TouchableOpacity>
+                </View>
               </View>
               <Text style={styles.fieldFooter}>
                 Use at least 8 characters. Include a country code with your phone number.
               </Text>
 
               <TouchableOpacity
-                style={[styles.button, loading && { opacity: 0.7 }]}
+                style={[styles.button, (loading || googleLoading) && { opacity: 0.7 }]}
                 onPress={handleRegister}
                 activeOpacity={0.7}
                 disabled={loading || googleLoading}
                 accessibilityRole="button"
-                accessibilityState={{ busy: loading, disabled: loading }}
+                accessibilityState={{ busy: loading, disabled: loading || googleLoading }}
               >
                 {loading ? (
-                  <ActivityIndicator color={Palette.textOnPrimary} size="small" />
+                  <View style={styles.buttonLoadingRow}>
+                    <ActivityIndicator color={Palette.textOnPrimary} size="small" />
+                    <Text style={styles.buttonText}>Creating Account...</Text>
+                  </View>
                 ) : (
                   <Text style={styles.buttonText}>Create Account</Text>
                 )}
@@ -734,6 +837,46 @@ const styles = StyleSheet.create({
     backgroundColor: SystemColors.secondarySystemBackground,
     borderRadius: Layout.radiusMedium,
     overflow: "hidden",
+  },
+  passwordRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    height: Layout.controlHeight,
+    paddingRight: 8,
+  },
+  passwordInput: {
+    flex: 1,
+    height: "100%",
+    paddingHorizontal: 16,
+    ...TextStyles.body,
+    color: SystemColors.label,
+  },
+  eyeToggle: {
+    padding: 8,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonLoadingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+  demoModeButton: {
+    marginTop: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-start",
+    backgroundColor: SystemColors.blue,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: Layout.radiusSmall,
+    gap: 6,
+  },
+  demoModeButtonText: {
+    ...TextStyles.footnote,
+    color: "#FFFFFF",
+    fontWeight: "600",
   },
   input: {
     height: Layout.controlHeight,
