@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import jsQR from "jsqr";
 import QRCodeSvg from "./QRCodeSvg";
 
 interface QrCodeModalProps {
@@ -41,6 +42,7 @@ export default function QrCodeModal({
   const streamRef = useRef<any>(null);
   const scanIntervalRef = useRef<any>(null);
   const fileInputRef = useRef<any>(null);
+  const canvasRef = useRef<any>(null);
 
   // Laser scan line animation
   const laserAnim = useRef(new Animated.Value(0)).current;
@@ -123,30 +125,64 @@ export default function QrCodeModal({
   const startScanningLoop = () => {
     if (Platform.OS !== "web" || typeof window === "undefined") return;
 
+    if (!canvasRef.current) {
+      canvasRef.current = document.createElement("canvas");
+    }
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
     // Check for native BarcodeDetector API support
     const hasBarcodeDetector = "BarcodeDetector" in window;
+    let detector: any = null;
     if (hasBarcodeDetector) {
       try {
-        const detector = new (window as any).BarcodeDetector({ formats: ["qr_code"] });
-        scanIntervalRef.current = setInterval(async () => {
-          if (videoRef.current && videoRef.current.readyState === 4) {
-            try {
-              const barcodes = await detector.detect(videoRef.current);
-              if (barcodes.length > 0) {
-                const code = barcodes[0].rawValue;
-                if (code) {
-                  handleScanDetected(code);
-                }
-              }
-            } catch {
-              // frame detection pass
-            }
-          }
-        }, 300);
+        detector = new (window as any).BarcodeDetector({ formats: ["qr_code"] });
       } catch {
-        // BarcodeDetector initialization fallback
+        detector = null;
       }
     }
+
+    scanIntervalRef.current = setInterval(async () => {
+      const video = videoRef.current;
+      if (!video || video.readyState < 2 || !video.videoWidth || !video.videoHeight) {
+        return;
+      }
+
+      // Try native BarcodeDetector first if available
+      if (detector) {
+        try {
+          const barcodes = await detector.detect(video);
+          if (barcodes.length > 0 && barcodes[0].rawValue) {
+            handleScanDetected(barcodes[0].rawValue);
+            return;
+          }
+        } catch {
+          // fall through to jsQR
+        }
+      }
+
+      // Universal Pure-JS jsQR decoder (works on all browsers & platforms)
+      if (ctx) {
+        try {
+          const width = video.videoWidth;
+          const height = video.videoHeight;
+          if (canvas.width !== width || canvas.height !== height) {
+            canvas.width = width;
+            canvas.height = height;
+          }
+          ctx.drawImage(video, 0, 0, width, height);
+          const imageData = ctx.getImageData(0, 0, width, height);
+          const code = jsQR(imageData.data, imageData.width, imageData.height, {
+            inversionAttempts: "dontInvert",
+          });
+          if (code && code.data) {
+            handleScanDetected(code.data);
+          }
+        } catch {
+          // Frame pass
+        }
+      }
+    }, 250);
   };
 
   const startCamera = async () => {
@@ -161,7 +197,8 @@ export default function QrCodeModal({
         streamRef.current = stream;
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
-          videoRef.current.play();
+          videoRef.current.setAttribute("playsinline", "true");
+          videoRef.current.play().catch(() => {});
         }
         setCameraActive(true);
         startScanningLoop();
@@ -227,20 +264,42 @@ export default function QrCodeModal({
     const file = event.target.files?.[0];
     if (!file) return;
 
-    if (Platform.OS === "web" && typeof window !== "undefined" && "BarcodeDetector" in window) {
+    if (Platform.OS === "web" && typeof window !== "undefined") {
       try {
-        const imageBitmap = await createImageBitmap(file);
-        const detector = new (window as any).BarcodeDetector({ formats: ["qr_code"] });
-        const barcodes = await detector.detect(imageBitmap);
-        if (barcodes.length > 0 && barcodes[0].rawValue) {
-          handleScanDetected(barcodes[0].rawValue);
-          return;
-        }
-      } catch {
-        // detection failed
+        const img = new (window as any).Image();
+        const objectUrl = URL.createObjectURL(file);
+        img.onload = () => {
+          try {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.naturalWidth || img.width;
+            canvas.height = img.naturalHeight || img.height;
+            const ctx = canvas.getContext("2d");
+            if (ctx) {
+              ctx.drawImage(img, 0, 0);
+              const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+              const code = jsQR(imageData.data, imageData.width, imageData.height);
+              if (code && code.data) {
+                handleScanDetected(code.data);
+                URL.revokeObjectURL(objectUrl);
+                return;
+              }
+            }
+          } catch (e) {
+            console.error("QR decode error:", e);
+          }
+          URL.revokeObjectURL(objectUrl);
+          setScanResult(`Image loaded (${file.name}), but no QR code found.`);
+        };
+        img.onerror = () => {
+          URL.revokeObjectURL(objectUrl);
+          setScanResult(`Could not read image ${file.name}.`);
+        };
+        img.src = objectUrl;
+        return;
+      } catch (err: any) {
+        console.error("File upload error:", err);
       }
     }
-    // Fallback if no code detected or BarcodeDetector not available
     setScanResult(`Image loaded: ${file.name}`);
   };
 
@@ -357,6 +416,7 @@ export default function QrCodeModal({
                       ref={videoRef}
                       playsInline
                       muted
+                      autoPlay
                       style={{
                         width: "100%",
                         height: 220,

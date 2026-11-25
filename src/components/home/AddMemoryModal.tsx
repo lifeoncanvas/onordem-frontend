@@ -10,6 +10,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { Palette } from "@/constants/theme";
 
@@ -94,6 +95,7 @@ export default function AddMemoryModal({
   onClose,
   onSelectOption,
 }: AddMemoryModalProps) {
+  const insets = useSafeAreaInsets();
   const fadeAnim = useMemo(() => new Animated.Value(0), []);
   const slideAnim = useMemo(() => new Animated.Value(80), []);
 
@@ -147,33 +149,32 @@ export default function AddMemoryModal({
         ]}
       >
         <TouchableWithoutFeedback>
-          <View style={styles.sheet}>
+          <View style={[styles.sheet, { paddingBottom: Math.max(insets.bottom + 16, 24) }]}>
             {/* Drag Handle */}
             <View style={styles.handle} />
 
-            <TouchableOpacity
-              onPress={onClose}
-              style={styles.backBtn}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              accessibilityRole="button"
-              accessibilityLabel="Back"
-            >
-              <Ionicons name="arrow-back" size={20} color={Palette.textPrimary} />
-            </TouchableOpacity>
-
             {/* Header */}
             <View style={styles.headerRow}>
+              <TouchableOpacity
+                onPress={onClose}
+                style={styles.headerIconBtn}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                accessibilityRole="button"
+                accessibilityLabel="Back"
+              >
+                <Ionicons name="arrow-back" size={20} color={Palette.textPrimary} />
+              </TouchableOpacity>
               <View style={styles.headerText}>
-                <Text style={styles.sheetTitle}>
-                  What Would You Like to Create?
+                <Text style={styles.sheetTitle} numberOfLines={1}>
+                  Create Keepsake
                 </Text>
-                <Text style={styles.sheetSubtitle}>
-                  Choose a canvas to capture someone meaningful
+                <Text style={styles.sheetSubtitle} numberOfLines={1}>
+                  Choose a canvas to honour your mentor
                 </Text>
               </View>
               <TouchableOpacity
                 onPress={onClose}
-                style={styles.closeBtn}
+                style={styles.headerIconBtn}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                 accessibilityRole="button"
                 accessibilityLabel="Close"
@@ -186,7 +187,7 @@ export default function AddMemoryModal({
             <ScrollView
               style={styles.gridScroll}
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.gridContent}
+              contentContainerStyle={[styles.gridContent, { paddingBottom: Math.max(insets.bottom + 24, 44) }]}
             >
               {/* Upload photos & videos */}
               <TouchableOpacity
@@ -310,18 +311,19 @@ const styles = StyleSheet.create({
   },
   sheetWrapper: {
     position: "absolute",
+    top: 0,
     bottom: 0,
     left: 0,
     right: 0,
+    justifyContent: "flex-end",
   },
   sheet: {
     backgroundColor: Palette.iceWhite,
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
-    height: "92%",
+    maxHeight: "92%",
     paddingHorizontal: 16,
     paddingTop: 10,
-    paddingBottom: Platform.OS === "ios" ? 44 : 28,
     boxShadow: "0px -6px 18px rgba(0, 0, 0, 0.16)",
   },
   handle: {
@@ -330,24 +332,19 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     backgroundColor: Palette.borderSubtle,
     alignSelf: "center",
-    marginBottom: 18,
+    marginBottom: 12,
   },
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    gap: 8,
-    marginBottom: 20,
+    gap: 12,
+    marginBottom: 16,
     paddingHorizontal: 4,
   },
-  backBtn: {
-    position: "absolute",
-    top: 10,
-    left: 16,
-    zIndex: 1,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+  headerIconBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: Palette.surfaceElevated,
     justifyContent: "center",
     alignItems: "center",
@@ -356,24 +353,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sheetTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "800",
     color: Palette.textPrimary,
     letterSpacing: -0.3,
-    lineHeight: 26,
   },
   sheetSubtitle: {
-    fontSize: 13,
+    fontSize: 12,
     color: Palette.textSecondary,
-    marginTop: 3,
-  },
-  closeBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: Palette.surfaceElevated,
-    justifyContent: "center",
-    alignItems: "center",
     marginTop: 2,
   },
   gridContent: {
@@ -381,6 +368,7 @@ const styles = StyleSheet.create({
   },
   gridScroll: {
     flex: 1,
+    flexShrink: 1,
   },
   grid: {
     flexDirection: "row",
@@ -413,21 +401,23 @@ const styles = StyleSheet.create({
   mediaIconOverlap: { marginLeft: -10 },
   mediaText: { flex: 1 },
   mediaTitle: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: "800",
     color: Palette.textPrimary,
     letterSpacing: -0.2,
   },
   mediaDesc: {
-    fontSize: 13,
+    fontSize: 12,
     color: Palette.textSecondary,
     marginTop: 2,
-    lineHeight: 18,
+    lineHeight: 16,
   },
 
   // ── Card ──────────────────────────────────────────────────────────────────
   card: {
-    width: "47.5%",
+    width: "48%",
+    flexGrow: 1,
+    minWidth: 140,
     borderRadius: 20,
     padding: 14,
     boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.07)",

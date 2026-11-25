@@ -21,7 +21,7 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -46,6 +46,7 @@ const STORY_MAX = 2000;
 const ACCENT = SystemColors.pink;
 
 export default function CreateTributeScreen() {
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{
     promptQuestion?: string;
     mentorName?: string;
@@ -491,7 +492,7 @@ export default function CreateTributeScreen() {
         </Animated.View>
 
         {/* Pinned footer */}
-        <View style={styles.footer}>
+        <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom + 12, 22) }]}>
           <View style={styles.footerInner}>
             {validationError && (
               <Text style={styles.error} accessibilityRole="alert">
@@ -643,8 +644,7 @@ const styles = StyleSheet.create({
 
   footer: {
     paddingHorizontal: Layout.margin,
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingTop: 12,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: SystemColors.separator,
     backgroundColor: SystemColors.systemBackground,

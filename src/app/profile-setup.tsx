@@ -18,7 +18,7 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -154,6 +154,7 @@ function WheelColumn<T extends string | number>({
 // ─── Screen ───────────────────────────────────────────────────────────────────
 
 export default function ProfileSetupScreen() {
+  const insets = useSafeAreaInsets();
   // The stored profile may still be loading on a cold start, so follow updates.
   const [existing, setExisting] = useState(() => userProfileService.getProfile());
   useEffect(() => userProfileService.subscribe(setExisting), []);
@@ -604,7 +605,7 @@ export default function ProfileSetupScreen() {
           </View>
         </ScrollView>
 
-        <View style={styles.footer}>
+        <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom + 12, 24) }]}>
           <View style={styles.footerInner}>
             {error && (
               <Text style={styles.inlineError} accessibilityRole="alert">
@@ -836,7 +837,9 @@ const styles = StyleSheet.create({
   footer: {
     paddingHorizontal: Layout.marginWide,
     paddingTop: 12,
-    paddingBottom: 12,
+    backgroundColor: SystemColors.systemBackground,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: SystemColors.separator,
   },
   footerInner: { width: "100%", maxWidth: CONTENT_MAX_WIDTH, alignSelf: "center", gap: 10 },
   primaryButton: {
